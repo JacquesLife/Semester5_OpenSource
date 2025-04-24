@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.budgettrackerapp.ui.theme.DarkBlue
+import com.example.budgettrackerapp.widget.ExpenseTextView
 
 @Composable
 fun HomeScreen() {
@@ -47,12 +47,12 @@ fun HomeScreen() {
                     }
             ) {
                 Column {
-                    Text(
+                    ExpenseTextView(
                         text = "Hello World",
                         fontSize = 24.sp,
                         color = Color.White
                     )
-                    Text(
+                    ExpenseTextView(
                         text = "This is a sample app",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -99,8 +99,8 @@ fun CardItem(modifier: Modifier) {
     ) {
         Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
             Column(modifier = Modifier.align(Alignment.CenterStart)) {
-                Text(text = "Total Balance", fontSize = 16.sp, color = Color.White)
-                Text(
+                ExpenseTextView(text = "Total Balance", fontSize = 16.sp, color = Color.White)
+                ExpenseTextView(
                     text = "R1000.00",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -140,8 +140,8 @@ fun CardItem(modifier: Modifier) {
 fun TransactionList(modifier: Modifier) {
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Recent Transactions", fontSize = 20.sp)
-            Text(
+            ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
+            ExpenseTextView(
                 text = "See All",
                 fontSize = 16.sp,
                 modifier = Modifier.align(Alignment.CenterEnd)
@@ -191,9 +191,9 @@ fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int) {
                 contentDescription = null
             )
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = title, fontSize = 16.sp, color = Color.White)
+            ExpenseTextView(text = title, fontSize = 16.sp, color = Color.White)
         }
-        Text(text = amount, fontSize = 20.sp, color = Color.White)
+        ExpenseTextView(text = amount, fontSize = 20.sp, color = Color.White)
     }
 }
 
@@ -208,15 +208,16 @@ fun TransactionItem(title: String, amount: String, icon: Int, date: String, colo
             )
             Spacer(modifier = Modifier.size(8.dp))
             Column {
-                Text(text = title, fontSize = 16.sp)
-                Text(text = date, fontSize = 12.sp)
+                ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                ExpenseTextView(text = date, fontSize = 12.sp)
             }
         }
-        Text(
+        ExpenseTextView(
             text = amount,
             fontSize = 20.sp,
             modifier = Modifier.align(Alignment.CenterEnd),
-            color = color
+            color = color,
+            fontWeight = FontWeight.SemiBold
         )
     }
 }

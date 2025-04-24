@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.budgettrackerapp.R
+import com.example.budgettrackerapp.widget.ExpenseTextView
 
 @Composable
 fun AddExpense() {
@@ -58,7 +59,7 @@ fun AddExpense() {
                     contentDescription = null,
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
-                Text(
+                ExpenseTextView(
                     text = "Add Expense",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -82,58 +83,55 @@ fun AddExpense() {
 
 @Composable
 fun DataForm(modifier: Modifier) {
-
-    Column(modifier = modifier
-        .padding(16.dp)
-        .fillMaxWidth()
-        .shadow(16.dp)
-        .background(Color.White)
-        .clip(RoundedCornerShape(16.dp))
-        .padding(16.dp)
-        .height(100.dp)
-        .verticalScroll(rememberScrollState())
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .shadow(16.dp)
+            .background(Color.White)
+            .clip(RoundedCornerShape(16.dp))
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-        Text(text = "Type", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "Type", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
-        Text(text = "Name", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "Name", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
-        Text(text = "Category", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "Category", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
-        Text(text = "Amount", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "Amount", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
-
         Spacer(modifier = Modifier.size(16.dp))
-        Text(text = "Date", fontSize = 14.sp, color = Color.Gray)
-        Spacer(modifier = Modifier.size(4.dp))
 
+        ExpenseTextView(text = "Date", fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
+
         Button(
-            onClick = {/*To-do*/},
+            onClick = { /* TODO */ },
             modifier = Modifier
                 .clip(RoundedCornerShape(2.dp))
-                .fillMaxWidth()) {
-            Text(
+                .fillMaxWidth()
+        ) {
+            ExpenseTextView(
                 text = "Add Expense",
                 fontSize = 14.sp,
                 color = Color.White,
             )
         }
-
     }
-
 }
-
 
 
 
