@@ -25,7 +25,6 @@ fun HomeScreen() {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
-
             Image(
                 painter = painterResource(id = R.drawable.toppage),
                 contentDescription = null,
@@ -66,7 +65,6 @@ fun HomeScreen() {
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
-
             CardItem(modifier = Modifier.constrainAs(card) {
                 top.linkTo(nameRow.bottom)
                 start.linkTo(parent.start)
