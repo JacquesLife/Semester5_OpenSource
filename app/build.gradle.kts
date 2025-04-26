@@ -73,4 +73,7 @@ dependencies {
     // Compose & Material3 (already added by you probably)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)
+
+    // Jetpack Compose ViewModel integration
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0") // Add this line
 }
