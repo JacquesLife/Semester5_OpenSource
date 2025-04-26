@@ -1,0 +1,82 @@
+package com.example.budgettrackerapp.widget
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.User
+
+@Composable
+fun LoginScreen(
+    viewModel: BudgetViewModel = viewModel(),
+    onLoginSuccess: () -> Unit
+) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        TextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = {
+                viewModel.loginUser(username, password)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Login")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                viewModel.registerUser(User(username, password))
+                errorMessage = "Registered successfully. Now log in!"
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Register")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error
+        )
+    }
+
+    val loginResult by viewModel.loginResult.observeAsState()
+
+    loginResult?.let {
+        onLoginSuccess()
+    }
+}

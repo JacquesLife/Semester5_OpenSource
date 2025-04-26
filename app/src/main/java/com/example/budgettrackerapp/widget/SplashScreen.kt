@@ -1,24 +1,23 @@
-package com.example.budgettrackerapp.ui.theme.splash
+package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.budgettrackerapp.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavHostController) {
     LaunchedEffect(key1 = true) {
         delay(3000)
-        navController.navigate("home") {
+        navController.navigate("login") {
             popUpTo("splash") { inclusive = true }
         }
     }

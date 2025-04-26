@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.benchmark.macro)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.core.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -59,7 +61,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("androidx.constraintlayout:constraintlayout-compose-android:1.1.1")
+    implementation(libs.androidx.constraintlayout.compose.android)
+    implementation(libs.androidx.lifecycle.runtime.compose.v262)
+    implementation(libs.lifecycle.runtime.compose)
+
     // Room
     implementation(libs.room.runtime)
     kapt(libs.room.compiler)
@@ -76,5 +81,5 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // Jetpack Compose ViewModel integration
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0") // Add this line
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
