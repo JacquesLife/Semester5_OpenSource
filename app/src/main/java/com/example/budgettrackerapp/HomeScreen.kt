@@ -17,12 +17,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import com.example.budgettrackerapp.ui.theme.DarkBlue
 import com.example.budgettrackerapp.widget.ExpenseTextView
 
 @Composable
-fun HomeScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun HomeScreen(navController: NavController) {
+    // Removed the Scaffold wrapper - will be handled by AppNavigation instead
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
             Image(
@@ -71,19 +75,22 @@ fun HomeScreen() {
                 end.linkTo(parent.end)
             })
 
-            TransactionList(modifier = Modifier
-                .fillMaxWidth()
-                .constrainAs(list) {
-                    top.linkTo(card.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                    height = Dimension.fillToConstraints
-                })
+            TransactionList(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .constrainAs(list) {
+                        top.linkTo(card.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
+                    }
+            )
         }
     }
 }
 
+// Rest of your code remains the same
 @Composable
 fun CardItem(modifier: Modifier) {
     Column(
@@ -220,8 +227,9 @@ fun TransactionItem(title: String, amount: String, icon: Int, date: String, colo
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen()
-}
+// Uncomment and update the preview if needed
+// @Preview(showBackground = true)
+// @Composable
+// fun PreviewHomeScreen() {
+//     HomeScreen(rememberNavController())
+// }

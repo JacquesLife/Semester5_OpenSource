@@ -76,5 +76,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // Jetpack Compose ViewModel integration
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0") // Add this line
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
+
+    //Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.1")
 }

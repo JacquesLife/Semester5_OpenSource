@@ -15,7 +15,7 @@ data class Transaction(val title: String, val amount: Double)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // <- Move this before setContent is fine too
+        enableEdgeToEdge()
 
         setContent {
             BudgetTrackerAppTheme {
