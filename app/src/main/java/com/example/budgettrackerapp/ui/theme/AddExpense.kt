@@ -2,13 +2,12 @@ package com.example.budgettrackerapp.ui.theme
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -17,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,11 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.widget.ExpenseTextView
 
 @Composable
-fun AddExpense() {
+fun AddExpense(navController: NavController? = null) {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -47,7 +47,8 @@ fun AddExpense() {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 })
-            Box(modifier = Modifier.fillMaxWidth()
+            Box(modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 60.dp, start = 16.dp, end = 16.dp)
                 .constrainAs(nameRow) {
                     top.linkTo(parent.top)
@@ -56,33 +57,45 @@ fun AddExpense() {
                 }) {
                 Image(
                     painter = painterResource(id = R.drawable.backarrow),
-                    contentDescription = null,
-                    modifier = Modifier.align(Alignment.CenterStart)
+                    contentDescription = "Go Back",
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        // Add click handler to go back
+                        .clickable {
+                            navController?.popBackStack()
+                        }
                 )
                 ExpenseTextView(
                     text = "Add Expense",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.padding(16.dp).align(Alignment.Center)
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center)
                 )
                 Image(
                     painter = painterResource(id = R.drawable.dotsmenue),
-                    contentDescription = null,
+                    contentDescription = "Menu",
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
-            DataForm(modifier = Modifier.padding(top = 60.dp).constrainAs(card){
-                top.linkTo(nameRow.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            })
+            DataForm(
+                navController = navController,
+                modifier = Modifier
+                    .padding(top = 60.dp)
+                    .constrainAs(card) {
+                        top.linkTo(nameRow.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
         }
     }
 }
 
 @Composable
-fun DataForm(modifier: Modifier) {
+fun DataForm(navController: NavController? = null, modifier: Modifier) {
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -119,7 +132,10 @@ fun DataForm(modifier: Modifier) {
         Spacer(modifier = Modifier.size(16.dp))
 
         Button(
-            onClick = { /* TODO */ },
+            onClick = {
+                // Save expense data and navigate back
+                navController?.popBackStack()
+            },
             modifier = Modifier
                 .clip(RoundedCornerShape(2.dp))
                 .fillMaxWidth()
@@ -133,10 +149,8 @@ fun DataForm(modifier: Modifier) {
     }
 }
 
-
-
 @Composable
 @Preview(showBackground = true)
 fun AddExpensePreview() {
-    AddExpense()
+    AddExpense(rememberNavController())
 }
