@@ -1,4 +1,4 @@
-package com.example.budgettrackerapp
+package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,16 +12,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
+import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.ui.theme.DarkBlue
-import com.example.budgettrackerapp.widget.ExpenseTextView
 
 @Composable
-fun HomeScreen() {
+fun TransactionScreen(navController: NavController) {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -220,8 +220,3 @@ fun TransactionItem(title: String, amount: String, icon: Int, date: String, colo
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewHomeScreen() {
-    HomeScreen()
-}

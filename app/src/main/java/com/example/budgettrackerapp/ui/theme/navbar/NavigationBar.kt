@@ -27,9 +27,9 @@ fun BottomNavBar(navController: NavController) {
 
     val items = listOf(
         BottomNavItem("Home", R.drawable.home, "home"),
-        BottomNavItem("Chart", R.drawable.chart, "Chart"),
+        BottomNavItem("stats", R.drawable.chart, "stats"),
         BottomNavItem("Wallet", R.drawable.wallet, "wallet"),
-        BottomNavItem("User", R.drawable.user, "User")
+        BottomNavItem("profile", R.drawable.user, "profile")
     )
 
     Box(

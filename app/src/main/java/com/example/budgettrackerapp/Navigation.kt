@@ -1,9 +1,12 @@
 package com.example.budgettrackerapp
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,9 +18,16 @@ import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
 import androidx.navigation.NavController
+import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.widget.HomeScreen
+import com.example.budgettrackerapp.widget.LoginScreen
+import com.example.budgettrackerapp.widget.TransactionScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+
+
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(viewModel: BudgetViewModel) {
     val navController = rememberNavController()
 
     // Get current route to determine when to show bottom bar
@@ -42,8 +52,12 @@ fun AppNavigation() {
                     SplashScreen(navController)
                 }
                 composable("home") {
-                    HomeScreen(navController)
+                    HomeScreen(viewModel = viewModel, navController = navController)
                 }
+                composable("transaction") {
+                    TransactionScreen(navController)
+                }
+
                 composable("stats") {
                     StatsScreen(navController)
                 }
@@ -52,6 +66,18 @@ fun AppNavigation() {
                 }
                 composable("profile") {
                     ProfileScreen(navController)
+                }
+                composable("login") {
+                    val vm: BudgetViewModel = viewModel()
+                    LoginScreen(
+                        viewModel      = vm,
+                        onLoginSuccess = {
+                            navController.navigate("home") {
+                                popUpTo("login") { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
                 }
                 composable(
                     route = "add_expense?initialAmount={initialAmount}",
@@ -74,16 +100,23 @@ fun AppNavigation() {
 // Placeholder screens - replace with your actual implementations or create them
 @Composable
 fun StatsScreen(navController: NavController) {
-    // Your stats screen content
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Stats Screen")
+    }
 }
 
 @Composable
 fun WalletScreen(navController: NavController) {
-    // Your wallet screen content
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Wallet Screen")
+    }
 }
 
 @Composable
 fun ProfileScreen(navController: NavController) {
-    // Your profile screen content
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Profile Screen")
+    }
 }
+
 

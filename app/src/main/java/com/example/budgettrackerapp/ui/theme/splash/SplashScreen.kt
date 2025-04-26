@@ -17,11 +17,13 @@ import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.ui.theme.InterFont
 import kotlinx.coroutines.delay
 
+
+
 @Composable
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(key1 = true) {
         delay(3000)
-        navController.navigate("home") {
+        navController.navigate("login") {
             popUpTo("splash") { inclusive = true }
         }
     }
