@@ -108,7 +108,7 @@ fun BillCardItem(modifier: Modifier) {
             Column(modifier = Modifier.align(Alignment.CenterStart)) {
                 ExpenseTextView(text = "Total Balance", fontSize = 16.sp, color = Color.White)
                 ExpenseTextView(
-                    text = "R1000.00", // Adjust based on your balance logic
+                    text = "R1000.00",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -130,7 +130,7 @@ fun BillCardItem(modifier: Modifier) {
             BillCardRowItem(
                 modifier = Modifier.align(Alignment.CenterStart),
                 title = "Upcoming Bills",
-                amount = "R500.00", // Adjust this dynamically if needed
+                amount = "R500.00",
                 image = R.drawable.uparrow
             )
             BillCardRowItem(
@@ -223,7 +223,7 @@ fun UpcomingBillItems() {
             title = "Netflix",
             amount = "R200.00",
             icon = R.drawable.netflix,
-            date = "Today",
+            date = "Due 10 June 2025",
             color = Color.Green
         )
 
@@ -231,7 +231,7 @@ fun UpcomingBillItems() {
             title = "Uber",
             amount = "R200.00",
             icon = R.drawable.uber,
-            date = "Today",
+            date = "Due 10 July 2025",
             color = Color.Green
         )
 
@@ -239,7 +239,7 @@ fun UpcomingBillItems() {
             title = "Starbucks",
             amount = "R200.00",
             icon = R.drawable.starbucks,
-            date = "Today",
+            date = "Due 10 August 2025",
             color = Color.Green
         )
 
@@ -247,7 +247,7 @@ fun UpcomingBillItems() {
             title = "Amazon Prime",
             amount = "R200.00",
             icon = R.drawable.amazon,
-            date = "Today",
+            date = "Due 10 September 2025",
             color = Color.Green
         )
     }
