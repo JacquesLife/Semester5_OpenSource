@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +24,7 @@ import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.ui.theme.DarkBlue
 
 @Composable
-fun TransactionScreen(navController: NavController) {
+fun UpcomingBillsScreen(navController: NavController) {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -48,12 +50,12 @@ fun TransactionScreen(navController: NavController) {
             ) {
                 Column {
                     ExpenseTextView(
-                        text = "Hello World",
+                        text = "Upcoming Bills",
                         fontSize = 24.sp,
                         color = Color.White
                     )
                     ExpenseTextView(
-                        text = "This is a sample app",
+                        text = "View your upcoming bills",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         color = Color.White
@@ -66,13 +68,16 @@ fun TransactionScreen(navController: NavController) {
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
-            CardItem(modifier = Modifier.constrainAs(card) {
+
+            // Card displaying total balance and details
+            BillCardItem(modifier = Modifier.constrainAs(card) {
                 top.linkTo(nameRow.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             })
 
-            TransactionList(
+            // List of upcoming bills
+            UpcomingBillsList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .constrainAs(list) {
@@ -89,7 +94,7 @@ fun TransactionScreen(navController: NavController) {
 }
 
 @Composable
-fun CardItem(modifier: Modifier) {
+fun BillCardItem(modifier: Modifier) {
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -103,7 +108,7 @@ fun CardItem(modifier: Modifier) {
             Column(modifier = Modifier.align(Alignment.CenterStart)) {
                 ExpenseTextView(text = "Total Balance", fontSize = 16.sp, color = Color.White)
                 ExpenseTextView(
-                    text = "R1000.00",
+                    text = "R1000.00", // Adjust based on your balance logic
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -122,16 +127,16 @@ fun CardItem(modifier: Modifier) {
                 .fillMaxWidth()
                 .weight(1f),
         ) {
-            CardRowItem(
+            BillCardRowItem(
                 modifier = Modifier.align(Alignment.CenterStart),
-                title = "Income",
-                amount = "R3,494",
+                title = "Upcoming Bills",
+                amount = "R500.00", // Adjust this dynamically if needed
                 image = R.drawable.uparrow
             )
-            CardRowItem(
+            BillCardRowItem(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                title = "Expense",
-                amount = "R1,230",
+                title = "Paid Bills",
+                amount = "R300.00", // Adjust this dynamically if needed
                 image = R.drawable.downarrow
             )
         }
@@ -139,9 +144,24 @@ fun CardItem(modifier: Modifier) {
 }
 
 @Composable
-fun TransactionList(modifier: Modifier, navController: NavController) {
+fun BillCardRowItem(modifier: Modifier, title: String, amount: String, image: Int) {
+    Column(modifier = modifier) {
+        Row {
+            Image(
+                painter = painterResource(id = image),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            ExpenseTextView(text = title, fontSize = 16.sp, color = Color.White)
+        }
+        ExpenseTextView(text = amount, fontSize = 20.sp, color = Color.White)
+    }
+}
+
+@Composable
+fun UpcomingBillsList(modifier: Modifier, navController: NavController) {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Transactions", "Upcoming Bills")
+    val tabs = listOf("Upcoming Bills", "Transactions")
 
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         // Tab switcher
@@ -167,7 +187,7 @@ fun TransactionList(modifier: Modifier, navController: NavController) {
                         .clickable {
                             selectedTab = index
                             if (index == 1) {
-                                navController.navigate("upcoming_bills")
+                                navController.navigate("transaction")
                             }
                         },
                     contentAlignment = Alignment.Center
@@ -181,16 +201,16 @@ fun TransactionList(modifier: Modifier, navController: NavController) {
             }
         }
 
-        // Show transactions when on the Transactions tab
-        RecentTransactions()
+        // Show upcoming bills when on the Upcoming Bills tab
+        UpcomingBillItems()
     }
 }
 
 @Composable
-fun RecentTransactions() {
+fun UpcomingBillItems() {
     Column {
         Box(modifier = Modifier.fillMaxWidth()) {
-            ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
+            ExpenseTextView(text = "Upcoming Bills", fontSize = 20.sp)
             ExpenseTextView(
                 text = "See All",
                 fontSize = 16.sp,
@@ -199,57 +219,42 @@ fun RecentTransactions() {
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        TransactionItem(
+        BillItem(
             title = "Netflix",
             amount = "R200.00",
             icon = R.drawable.netflix,
             date = "Today",
-            color = Color.Red
+            color = Color.Green
         )
 
-        TransactionItem(
+        BillItem(
             title = "Uber",
             amount = "R200.00",
             icon = R.drawable.uber,
             date = "Today",
-            color = Color.Red
+            color = Color.Green
         )
 
-        TransactionItem(
+        BillItem(
             title = "Starbucks",
             amount = "R200.00",
             icon = R.drawable.starbucks,
             date = "Today",
-            color = Color.Red
+            color = Color.Green
         )
 
-        TransactionItem(
+        BillItem(
             title = "Amazon Prime",
             amount = "R200.00",
             icon = R.drawable.amazon,
             date = "Today",
-            color = Color.Red
+            color = Color.Green
         )
     }
 }
 
 @Composable
-fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int) {
-    Column(modifier = modifier) {
-        Row {
-            Image(
-                painter = painterResource(id = image),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            ExpenseTextView(text = title, fontSize = 16.sp, color = Color.White)
-        }
-        ExpenseTextView(text = amount, fontSize = 20.sp, color = Color.White)
-    }
-}
-
-@Composable
-fun TransactionItem(title: String, amount: String, icon: Int, date: String, color: Color) {
+fun BillItem(title: String, amount: String, icon: Int, date: String, color: Color) {
     Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(

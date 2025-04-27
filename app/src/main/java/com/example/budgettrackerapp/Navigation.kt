@@ -8,41 +8,35 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
-import androidx.navigation.NavController
-import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.widget.HomeScreen
 import com.example.budgettrackerapp.widget.LoginScreen
 import com.example.budgettrackerapp.widget.TransactionScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
-
-
+import com.example.budgettrackerapp.widget.UpcomingBillsScreen
 
 @Composable
 fun AppNavigation(viewModel: BudgetViewModel) {
     val navController = rememberNavController()
-
-    // Get current route to determine when to show bottom bar
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     Scaffold(
         bottomBar = {
-            // Only show the bottom bar on main screens (home, stats, wallet, profile)
-            // Don't show it on splash or add_expense screens
             if (currentRoute != null && currentRoute != "splash" && !currentRoute.startsWith("add_expense")) {
                 BottomNavBar(navController = navController)
             }
         }
     ) { innerPadding ->
-        // Apply the padding to the NavHost content
         Box(modifier = Modifier.padding(innerPadding)) {
             NavHost(
                 navController = navController,
@@ -57,7 +51,9 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                 composable("transaction") {
                     TransactionScreen(navController)
                 }
-
+                composable("upcoming_bills") {
+                    UpcomingBillsScreen(navController)
+                }
                 composable("stats") {
                     StatsScreen(navController)
                 }
@@ -68,9 +64,8 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     ProfileScreen(navController)
                 }
                 composable("login") {
-                    val vm: BudgetViewModel = viewModel()
                     LoginScreen(
-                        viewModel      = vm,
+                        viewModel = viewModel,
                         onLoginSuccess = {
                             navController.navigate("home") {
                                 popUpTo("login") { inclusive = true }
@@ -90,14 +85,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     )
                 ) { backStackEntry ->
                     val initialAmount = backStackEntry.arguments?.getString("initialAmount") ?: "0.00"
-                    AddExpense(navController = navController)
+                    AddExpense(
+                        navController = navController,
+                        initialAmount = initialAmount
+                    )
                 }
             }
         }
     }
 }
 
-// Placeholder screens - replace with your actual implementations or create them
+// Placeholder screens - you can replace these later if needed
 @Composable
 fun StatsScreen(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -118,5 +116,3 @@ fun ProfileScreen(navController: NavController) {
         Text("Profile Screen")
     }
 }
-
-

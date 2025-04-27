@@ -3,20 +3,14 @@ package com.example.budgettrackerapp.ui.theme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +28,7 @@ import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.widget.ExpenseTextView
 
 @Composable
-fun AddExpense(navController: NavController? = null) {
+fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00") {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -46,25 +40,27 @@ fun AddExpense(navController: NavController? = null) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                })
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 60.dp, start = 16.dp, end = 16.dp)
-                .constrainAs(nameRow) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }) {
+                }
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 60.dp, start = 16.dp, end = 16.dp)
+                    .constrainAs(nameRow) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.backarrow),
                     contentDescription = "Go Back",
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        // Add click handler to go back
-                        .clickable {
-                            navController?.popBackStack()
-                        }
+                        .clickable { navController?.popBackStack() }
                 )
+
                 ExpenseTextView(
                     text = "Add Expense",
                     fontSize = 20.sp,
@@ -74,14 +70,17 @@ fun AddExpense(navController: NavController? = null) {
                         .padding(16.dp)
                         .align(Alignment.Center)
                 )
+
                 Image(
                     painter = painterResource(id = R.drawable.dotsmenue),
                     contentDescription = "Menu",
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
+
             DataForm(
                 navController = navController,
+                initialAmount = initialAmount,
                 modifier = Modifier
                     .padding(top = 60.dp)
                     .constrainAs(card) {
@@ -95,7 +94,13 @@ fun AddExpense(navController: NavController? = null) {
 }
 
 @Composable
-fun DataForm(navController: NavController? = null, modifier: Modifier) {
+fun DataForm(navController: NavController? = null, initialAmount: String = "0.00", modifier: Modifier) {
+    var type by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var category by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf(initialAmount) }
+    var date by remember { mutableStateOf("") }
+
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -108,32 +113,32 @@ fun DataForm(navController: NavController? = null, modifier: Modifier) {
     ) {
         ExpenseTextView(text = "Type", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = type, onValueChange = { type = it }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
         ExpenseTextView(text = "Name", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = name, onValueChange = { name = it }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
         ExpenseTextView(text = "Category", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = category, onValueChange = { category = it }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
         ExpenseTextView(text = "Amount", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = amount, onValueChange = { amount = it }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
         ExpenseTextView(text = "Date", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(value = " ", onValueChange = {}, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = date, onValueChange = { date = it }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.size(16.dp))
 
         Button(
             onClick = {
-                // Save expense data and navigate back
+                // You can save the expense here
                 navController?.popBackStack()
             },
             modifier = Modifier
