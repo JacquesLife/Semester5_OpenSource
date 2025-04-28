@@ -25,6 +25,22 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     private val _loginResult = MutableLiveData<User?>()
     val loginResult: LiveData<User?> get() = _loginResult
 
+    // ADD THESE:
+    private val _yearlyBudget = MutableLiveData<Double>()
+    val yearlyBudget: LiveData<Double> get() = _yearlyBudget
+
+    private val _monthlyMaxGoal = MutableLiveData<Double>()
+    val monthlyMaxGoal: LiveData<Double> get() = _monthlyMaxGoal
+
+    private val _monthlyMinGoal = MutableLiveData<Double>()
+    val monthlyMinGoal: LiveData<Double> get() = _monthlyMinGoal
+
+    fun setBudget(yearlyBudget: Double, monthlyMaxGoal: Double, monthlyMinGoal: Double) {
+        _yearlyBudget.value = yearlyBudget
+        _monthlyMaxGoal.value = monthlyMaxGoal
+        _monthlyMinGoal.value = monthlyMinGoal
+    }
+
     fun registerUser(user: User) = viewModelScope.launch {
         repository.registerUser(user)
     }
