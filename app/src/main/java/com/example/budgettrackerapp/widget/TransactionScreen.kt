@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -188,7 +190,9 @@ fun TransactionList(modifier: Modifier, navController: NavController) {
 
 @Composable
 fun RecentTransactions() {
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
             ExpenseTextView(
@@ -200,33 +204,79 @@ fun RecentTransactions() {
         Spacer(modifier = Modifier.height(8.dp))
 
         TransactionItem(
-            title = "Netflix",
+            title = "Food",
             amount = "R200.00",
-            icon = R.drawable.netflix,
+            icon = R.drawable.food,
             date = "Today",
             color = Color.Red
         )
-
         TransactionItem(
-            title = "Uber",
+            title = "Transport",
             amount = "R200.00",
-            icon = R.drawable.uber,
+            icon = R.drawable.car,
             date = "Today",
             color = Color.Red
         )
-
         TransactionItem(
-            title = "Starbucks",
+            title = "Groceries",
             amount = "R200.00",
-            icon = R.drawable.starbucks,
+            icon = R.drawable.shopping,
             date = "Today",
             color = Color.Red
         )
-
         TransactionItem(
-            title = "Amazon Prime",
+            title = "Phone and Internet",
             amount = "R200.00",
-            icon = R.drawable.amazon,
+            icon = R.drawable.communication,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Entertainment",
+            amount = "R200.00",
+            icon = R.drawable.entertainment,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Healthcare",
+            amount = "R200.00",
+            icon = R.drawable.health,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Rent",
+            amount = "R200.00",
+            icon = R.drawable.house,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Utilities",
+            amount = "R200.00",
+            icon = R.drawable.utilities,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Savings",
+            amount = "R200.00",
+            icon = R.drawable.savings,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Investment",
+            amount = "R200.00",
+            icon = R.drawable.investment,
+            date = "Today",
+            color = Color.Red
+        )
+        TransactionItem(
+            title = "Other",
+            amount = "R200.00",
+            icon = R.drawable.other,
             date = "Today",
             color = Color.Red
         )

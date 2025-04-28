@@ -231,7 +231,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     )
                 }
             },
-            readOnly = true // Make the field read-only as we're using a date picker
+            readOnly = true
         )
 
         Spacer(modifier = Modifier.size(24.dp))
