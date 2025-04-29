@@ -79,4 +79,6 @@ dependencies {
 
     // Jetpack Compose ViewModel integration
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0") // Add this line
+    // Graph dependecy
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

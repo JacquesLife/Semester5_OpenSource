@@ -20,6 +20,7 @@ import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
+import com.example.budgettrackerapp.ui.theme.stats.StatsScreen
 import com.example.budgettrackerapp.widget.HomeScreen
 import com.example.budgettrackerapp.widget.LoginScreen
 import com.example.budgettrackerapp.widget.TransactionScreen
@@ -96,12 +97,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
 }
 
 // Placeholder screens - you can replace these later if needed
-@Composable
-fun StatsScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Stats Screen")
-    }
-}
+
 
 @Composable
 fun WalletScreen(navController: NavController) {
