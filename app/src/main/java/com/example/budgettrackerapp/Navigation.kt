@@ -21,6 +21,7 @@ import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.rewards.RewardsScreen
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
+import com.example.budgettrackerapp.ui.theme.profile.ProfileScreen // <-- Correct import
 import com.example.budgettrackerapp.widget.HomeScreen
 import com.example.budgettrackerapp.widget.LoginScreen
 import com.example.budgettrackerapp.widget.TransactionScreen
@@ -59,11 +60,15 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     StatsScreen(navController)
                 }
                 composable("wallet") {
-                    RewardsScreen() // No arguments are needed here
+                    RewardsScreen()
                 }
-
                 composable("profile") {
-                    ProfileScreen(navController)
+                    ProfileScreen(
+                        username = "John Doe",
+                        rank = "Gold",
+                        totalBudget = 5000.0,
+                        remainingBudget = 2750.0
+                    )
                 }
                 composable("login") {
                     LoginScreen(
@@ -97,19 +102,10 @@ fun AppNavigation(viewModel: BudgetViewModel) {
     }
 }
 
-// Placeholder screens - you can replace these later if needed
+// Placeholder Stats screen
 @Composable
 fun StatsScreen(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Stats Screen")
-    }
-}
-
-
-
-@Composable
-fun ProfileScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Profile Screen")
     }
 }
