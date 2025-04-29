@@ -50,7 +50,7 @@ fun SplashScreen(navController: NavController) {
                 modifier = Modifier.size(150.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp)) // Space between logo and text
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
                 text = "Welcome to Buck Savers",

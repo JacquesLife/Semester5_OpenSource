@@ -79,4 +79,10 @@ dependencies {
 
     // Jetpack Compose ViewModel integration
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0") // Add this line
+
+    // Jetpack Compose Navigation
+    implementation("androidx.activity:activity-compose:1.7.0")
+
+    // Jetpack Compose Coil
+    implementation("io.coil-kt:coil-compose:2.2.2")
 }

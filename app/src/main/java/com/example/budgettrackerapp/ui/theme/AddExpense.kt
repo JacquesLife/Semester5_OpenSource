@@ -1,6 +1,9 @@
 package com.example.budgettrackerapp.ui.theme
 
 import android.app.DatePickerDialog
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.widget.ExpenseTextView
 import java.text.SimpleDateFormat
@@ -43,7 +47,7 @@ import java.util.*
 fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00") {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (imageRef, nameRow, list, card) = createRefs()
+            val (imageRef, nameRow, card) = createRefs()
 
             Image(
                 painter = painterResource(id = R.drawable.toppage),
@@ -113,11 +117,9 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
     var date by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
-    // Calendar setup
     val calendar = remember { Calendar.getInstance() }
     val dateFormatter = remember { SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault()) }
 
-    // Date picker dialog
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
@@ -142,6 +144,13 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         "Investment" to R.drawable.investment,
         "Other" to R.drawable.other
     )
+
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri
+    }
 
     Column(
         modifier = modifier
@@ -206,7 +215,6 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         }
 
         Spacer(modifier = Modifier.size(16.dp))
-
         ExpenseTextView(text = "AMOUNT", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
@@ -216,7 +224,6 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         )
 
         Spacer(modifier = Modifier.size(16.dp))
-
         ExpenseTextView(text = "DATE", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
@@ -233,6 +240,26 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             },
             readOnly = true
         )
+
+        Spacer(modifier = Modifier.size(16.dp))
+        Text("ATTACH IMAGE (optional)", fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Button(onClick = { imagePickerLauncher.launch("image/*") }) {
+            Text("Choose Image")
+        }
+
+        selectedImageUri?.let { uri ->
+            Spacer(modifier = Modifier.height(8.dp))
+            Image(
+                painter = rememberAsyncImagePainter(model = uri),
+                contentDescription = "Selected Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+        }
 
         Spacer(modifier = Modifier.size(24.dp))
 
