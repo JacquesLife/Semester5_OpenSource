@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
+import com.example.budgettrackerapp.ui.theme.rewards.RewardsScreen
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
 import com.example.budgettrackerapp.widget.HomeScreen
 import com.example.budgettrackerapp.widget.LoginScreen
@@ -58,8 +59,9 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     StatsScreen(navController)
                 }
                 composable("wallet") {
-                    WalletScreen(navController)
+                    RewardsScreen() // No arguments are needed here
                 }
+
                 composable("profile") {
                     ProfileScreen(navController)
                 }
@@ -103,12 +105,7 @@ fun StatsScreen(navController: NavController) {
     }
 }
 
-@Composable
-fun WalletScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Wallet Screen")
-    }
-}
+
 
 @Composable
 fun ProfileScreen(navController: NavController) {
