@@ -83,7 +83,7 @@ fun TierCard(tierName: String, minPoints: Int, maxPoints: Int) {
         }
     }
 }
-
+// Get users
 fun getUserTier(points: Int): String {
     return when {
         points <= 100 -> "Bronze"
