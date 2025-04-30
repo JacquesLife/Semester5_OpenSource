@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.widget.ExpenseTextView
@@ -45,60 +46,80 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
         imageUri.value = uri
     }
 
-
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (header, form) = createRefs()
+            val (imageRef, headerContent, form) = createRefs()
 
+            // Background image
+            Image(
+                painter = painterResource(id = R.drawable.toppage),
+                contentDescription = null,
+                modifier = Modifier.constrainAs(imageRef) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+            )
 
-            Header(navController = navController, modifier = Modifier.constrainAs(header) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            })
+            // Header content with back button
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 48.dp, start = 16.dp, end = 16.dp)
+                    .constrainAs(headerContent) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            ) {
+                // Back button
+                IconButton(
+                    onClick = { navController?.popBackStack() },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.backarrow),
+                        contentDescription = "Back",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
 
+                // Title
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    ExpenseTextView(
+                        text = "Add Expense",
+                        fontSize = 24.sp,
+                        color = Color.White
+                    )
+                    ExpenseTextView(
+                        text = "Record your expenses",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                }
+            }
+
+            // Form content
             DataForm(
                 navController = navController,
                 initialAmount = initialAmount,
                 imageUri = imageUri.value,
                 onGalleryClick = { launcherGallery.launch("image/*") },
                 modifier = Modifier
-                    .padding(top = 60.dp)
                     .constrainAs(form) {
-                        top.linkTo(header.bottom)
+                        top.linkTo(headerContent.bottom, margin = 24.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
                     }
             )
         }
-    }
-}
-
-@Composable
-fun Header(navController: NavController?, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.backarrow),
-            contentDescription = "Back",
-            modifier = Modifier
-                .size(32.dp)
-                .clickable { navController?.popBackStack() }
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Add Expense",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        // Optional: leave space for symmetry or future icons
-        Spacer(modifier = Modifier.size(32.dp))
     }
 }
 
@@ -146,11 +167,11 @@ fun DataForm(
 
     Column(
         modifier = modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .shadow(8.dp)
             .background(Color.White)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
