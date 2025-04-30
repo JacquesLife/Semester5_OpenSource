@@ -54,7 +54,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     TransactionScreen(navController)
                 }
                 composable("upcoming_bills") {
-                    UpcomingBillsScreen(navController)
+                    UpcomingBillsScreen(navController = navController, viewModel = viewModel)
                 }
                 composable("stats") {
                     StatsScreen(navController)

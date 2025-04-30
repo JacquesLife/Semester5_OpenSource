@@ -1,4 +1,3 @@
-
 package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.background
@@ -19,8 +18,7 @@ import com.example.budgettrackerapp.data.BudgetSettings
 import com.example.budgettrackerapp.data.BudgetViewModel
 
 @Composable
-fun HomeScreen(viewModel: BudgetViewModel = viewModel(),navController: NavController) {
-    val viewModel: BudgetViewModel = viewModel()
+fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController) {
     val context = LocalContext.current
 
     var monthlyBudget by remember { mutableStateOf("") }
@@ -74,6 +72,9 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(),navController: NavContro
                     monthlyMinGoal = monthlyMinGoal.toDoubleOrNull() ?: 0.0
                 )
                 viewModel.saveBudgetSettings(settings)
+
+                // Navigate to the upcoming bills screen
+                navController.navigate("upcoming_bills")
             },
             modifier = Modifier
                 .fillMaxWidth()
