@@ -85,4 +85,7 @@ dependencies {
 
     // Jetpack Compose Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
+
+    // Graph dependecy
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
