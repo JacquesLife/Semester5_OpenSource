@@ -1,13 +1,10 @@
+
 package com.example.budgettrackerapp.data
 
 class BudgetRepository(
     private val userDao: UserDao,
-    private val categoryDao: CategoryDao,
     private val expenseDao: ExpenseDao
 ) {
-
-    // ----------------- USERS -----------------
-
     suspend fun registerUser(user: User) {
         userDao.insertUser(user)
     }
@@ -15,18 +12,6 @@ class BudgetRepository(
     suspend fun loginUser(username: String, password: String): User? {
         return userDao.login(username, password)
     }
-
-    // ----------------- CATEGORIES -----------------
-
-    suspend fun addCategory(category: Category) {
-        categoryDao.insert(category)
-    }
-
-    suspend fun getCategoriesForUser(username: String): List<Category> {
-        return categoryDao.getAll(username)
-    }
-
-    // ----------------- EXPENSES -----------------
 
     suspend fun addExpense(expense: Expense) {
         expenseDao.insert(expense)
@@ -36,7 +21,7 @@ class BudgetRepository(
         return expenseDao.getBetweenDates(start, end)
     }
 
-    suspend fun getTotalForCategory(catId: Int, start: String, end: String): Double {
-        return expenseDao.getTotalForCategory(catId, start, end)
+    suspend fun getTotalForCategory(category: String, start: String, end: String): Double {
+        return expenseDao.getTotalForCategory(category, start, end)
     }
 }

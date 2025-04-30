@@ -1,3 +1,4 @@
+
 package com.example.budgettrackerapp.data
 
 import androidx.room.Dao
@@ -12,6 +13,6 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE date BETWEEN :start AND :end")
     suspend fun getBetweenDates(start: String, end: String): List<Expense>
 
-    @Query("SELECT SUM(amount) FROM expenses WHERE categoryId = :catId AND date BETWEEN :start AND :end")
-    suspend fun getTotalForCategory(catId: Int, start: String, end: String): Double
+    @Query("SELECT SUM(amount) FROM expenses WHERE category = :category AND date BETWEEN :start AND :end")
+    suspend fun getTotalForCategory(category: String, start: String, end: String): Double
 }

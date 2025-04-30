@@ -1,18 +1,10 @@
+
 package com.example.budgettrackerapp.data
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(
-    tableName = "expenses",
-    foreignKeys = [ForeignKey(
-        entity = Category::class,
-        parentColumns = ["id"],
-        childColumns = ["categoryId"],
-        onDelete = ForeignKey.CASCADE
-    )]
-)
+@Entity(tableName = "expenses")
 data class Expense(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val amount: Double,
@@ -20,6 +12,6 @@ data class Expense(
     val startTime: String,
     val endTime: String,
     val description: String,
-    val categoryId: Int,
+    val category: String,
     val photoUri: String? = null
 )
