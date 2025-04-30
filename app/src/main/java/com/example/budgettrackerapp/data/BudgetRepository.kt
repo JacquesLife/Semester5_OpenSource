@@ -3,7 +3,8 @@ package com.example.budgettrackerapp.data
 
 class BudgetRepository(
     private val userDao: UserDao,
-    private val expenseDao: ExpenseDao
+    private val expenseDao: ExpenseDao,
+    private val budgetSettingsDao: BudgetSettingsDao
 ) {
     suspend fun registerUser(user: User) {
         userDao.insertUser(user)
@@ -23,5 +24,13 @@ class BudgetRepository(
 
     suspend fun getTotalForCategory(category: String, start: String, end: String): Double {
         return expenseDao.getTotalForCategory(category, start, end)
+    }
+
+    suspend fun saveBudgetSettings(settings: BudgetSettings) {
+        budgetSettingsDao.insert(settings)
+    }
+
+    suspend fun getBudgetSettings(): BudgetSettings? {
+        return budgetSettingsDao.getSettings()
     }
 }

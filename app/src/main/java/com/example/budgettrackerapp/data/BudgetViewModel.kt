@@ -13,7 +13,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     private val db = AppDatabase.getDatabase(application)
     private val repository = BudgetRepository(
         db.userDao(),
-        db.expenseDao()
+        db.expenseDao(),
+        db.budgetSettingsDao()
     )
 
     private val _expenses = MutableLiveData<List<Expense>>()
@@ -22,22 +23,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     private val _loginResult = MutableLiveData<User?>()
     val loginResult: LiveData<User?> get() = _loginResult
 
-
-
-    private val _yearlyBudget = MutableLiveData<Double>()
-    val yearlyBudget: LiveData<Double> get() = _yearlyBudget
-
-    private val _monthlyMaxGoal = MutableLiveData<Double>()
-    val monthlyMaxGoal: LiveData<Double> get() = _monthlyMaxGoal
-
-    private val _monthlyMinGoal = MutableLiveData<Double>()
-    val monthlyMinGoal: LiveData<Double> get() = _monthlyMinGoal
-
-    fun setBudget(yearlyBudget: Double, monthlyMaxGoal: Double, monthlyMinGoal: Double) {
-        _yearlyBudget.value = yearlyBudget
-        _monthlyMaxGoal.value = monthlyMaxGoal
-        _monthlyMinGoal.value = monthlyMinGoal
-    }
+    private val _budgetSettings = MutableLiveData<BudgetSettings?>()
+    val budgetSettings: LiveData<BudgetSettings?> get() = _budgetSettings
 
     fun registerUser(user: User) = viewModelScope.launch {
         repository.registerUser(user)
@@ -60,5 +47,13 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
             val total = repository.getTotalForCategory(category, start, end)
             callback(total)
         }
+    }
+
+    fun saveBudgetSettings(settings: BudgetSettings) = viewModelScope.launch {
+        repository.saveBudgetSettings(settings)
+    }
+
+    fun loadBudgetSettings() = viewModelScope.launch {
+        _budgetSettings.value = repository.getBudgetSettings()
     }
 }

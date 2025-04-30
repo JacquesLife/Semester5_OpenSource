@@ -1,9 +1,6 @@
 package com.example.budgettrackerapp.ui.theme
 
 import android.app.DatePickerDialog
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,7 +10,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,49 +28,78 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
+import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.Expense
 import com.example.budgettrackerapp.widget.ExpenseTextView
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00") {
-    val context = LocalContext.current
-    val imageUri = remember { mutableStateOf<Uri?>(null) }
-
-    val launcherGallery = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri.value = uri
-    }
-
-
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (header, form) = createRefs()
+            val (imageRef, nameRow, list, card) = createRefs()
 
+            Image(
+                painter = painterResource(id = R.drawable.toppage),
+                contentDescription = null,
+                modifier = Modifier.constrainAs(imageRef) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+            )
 
-            Header(navController = navController, modifier = Modifier.constrainAs(header) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            })
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 60.dp, start = 16.dp, end = 16.dp)
+                    .constrainAs(nameRow) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.backarrow),
+                    contentDescription = "Go Back",
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .clickable { navController?.popBackStack() }
+                )
+
+                ExpenseTextView(
+                    text = "Add Expense",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center)
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.dotsmenue),
+                    contentDescription = "Menu",
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                )
+            }
 
             DataForm(
                 navController = navController,
                 initialAmount = initialAmount,
-                imageUri = imageUri.value,
-                onGalleryClick = { launcherGallery.launch("image/*") },
                 modifier = Modifier
                     .padding(top = 60.dp)
-                    .constrainAs(form) {
-                        top.linkTo(header.bottom)
+                    .constrainAs(card) {
+                        top.linkTo(nameRow.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
@@ -75,50 +109,18 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
 }
 
 @Composable
-fun Header(navController: NavController?, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.backarrow),
-            contentDescription = "Back",
-            modifier = Modifier
-                .size(32.dp)
-                .clickable { navController?.popBackStack() }
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Add Expense",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        // Optional: leave space for symmetry or future icons
-        Spacer(modifier = Modifier.size(32.dp))
-    }
-}
-
-@Composable
-fun DataForm(
-    navController: NavController?,
-    initialAmount: String,
-    imageUri: Uri?,
-    onGalleryClick: () -> Unit,
-    modifier: Modifier
-) {
+fun DataForm(navController: NavController? = null, initialAmount: String = "0.00", modifier: Modifier) {
     val context = LocalContext.current
     var selectedCategory by remember { mutableStateOf("Select Category") }
     var amount by remember { mutableStateOf(initialAmount) }
     var date by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
 
+    // Calendar setup
     val calendar = remember { Calendar.getInstance() }
     val dateFormatter = remember { SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault()) }
 
+    // Date picker dialog
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
@@ -148,15 +150,15 @@ fun DataForm(
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .shadow(8.dp)
+            .shadow(16.dp)
             .background(Color.White)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // Category
         ExpenseTextView(text = "CATEGORY", fontSize = 14.sp, color = Color.Gray)
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.size(4.dp))
+
         Box {
             OutlinedButton(
                 onClick = { expanded = true },
@@ -173,26 +175,32 @@ fun DataForm(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    Text(text = selectedCategory, color = Color.Black)
+                    Text(
+                        text = selectedCategory,
+                        color = Color.Black
+                    )
                 }
             }
 
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                categories.forEach { (name, icon) ->
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                categories.forEach { (categoryName, iconRes) ->
                     DropdownMenuItem(
                         onClick = {
-                            selectedCategory = name
+                            selectedCategory = categoryName
                             expanded = false
                         },
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
-                                    painter = painterResource(id = icon),
-                                    contentDescription = name,
+                                    painter = painterResource(id = iconRes),
+                                    contentDescription = categoryName,
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(name)
+                                Text(categoryName)
                             }
                         }
                     )
@@ -200,63 +208,64 @@ fun DataForm(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
-        // Amount
         ExpenseTextView(text = "AMOUNT", fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
-        // Date
         ExpenseTextView(text = "DATE", fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
             value = date,
             onValueChange = { date = it },
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(Icons.Default.DateRange, contentDescription = "Pick Date")
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select Date"
+                    )
                 }
             },
             readOnly = true
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.size(24.dp))
 
-        // Image picker
+        val viewModel: BudgetViewModel = viewModel()
+
         Button(
-            onClick = onGalleryClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Add photo")
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        imageUri?.let {
-            Image(
-                painter = rememberAsyncImagePainter(it),
-                contentDescription = "Receipt",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Submit
-        Button(
-            onClick = { navController?.popBackStack() },
-            modifier = Modifier.fillMaxWidth()
+            onClick = {
+                val expense = Expense(
+                    amount = amount.toDoubleOrNull() ?: 0.0,
+                    date = date,
+                    startTime = "",
+                    endTime = "",
+                    description = "",
+                    category = selectedCategory,
+                    photoUri = null
+                )
+                viewModel.addExpense(expense)
+                navController?.popBackStack()
+            },
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .fillMaxWidth()
         ) {
             Text("Add Expense", color = Color.White)
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun AddExpensePreview() {
+    AddExpense(rememberNavController())
 }

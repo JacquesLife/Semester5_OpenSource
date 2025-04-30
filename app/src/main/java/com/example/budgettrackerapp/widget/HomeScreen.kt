@@ -1,61 +1,66 @@
+
 package com.example.budgettrackerapp.widget
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.budgettrackerapp.data.BudgetSettings
 import com.example.budgettrackerapp.data.BudgetViewModel
 
 @Composable
-fun HomeScreen(viewModel: BudgetViewModel, navController: NavHostController) {
-    var yearlyBudgetInput by remember { mutableStateOf("") }
-    var monthlyMaxInput by remember { mutableStateOf("") }
-    var monthlyMinInput by remember { mutableStateOf("") }
+fun HomeScreen(viewModel: BudgetViewModel = viewModel(),navController: NavController) {
+    val viewModel: BudgetViewModel = viewModel()
+    val context = LocalContext.current
+
+    var monthlyBudget by remember { mutableStateOf("") }
+    var monthlyMaxGoal by remember { mutableStateOf("") }
+    var monthlyMinGoal by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .background(Color(0xFFF8F8F8))
+            .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Set Your Budget Goals", style = MaterialTheme.typography.headlineMedium)
+        Text("Set Your Budget Goals", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = yearlyBudgetInput,
-            onValueChange = { yearlyBudgetInput = it },
-            label = { Text("Yearly Budget") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            singleLine = true,
+            value = monthlyBudget,
+            onValueChange = { monthlyBudget = it },
+            label = { Text("Monthly Budget") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = monthlyMaxInput,
-            onValueChange = { monthlyMaxInput = it },
+            value = monthlyMaxGoal,
+            onValueChange = { monthlyMaxGoal = it },
             label = { Text("Monthly Max Goal") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = monthlyMinInput,
-            onValueChange = { monthlyMinInput = it },
+            value = monthlyMinGoal,
+            onValueChange = { monthlyMinGoal = it },
             label = { Text("Monthly Min Goal") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -63,17 +68,19 @@ fun HomeScreen(viewModel: BudgetViewModel, navController: NavHostController) {
 
         Button(
             onClick = {
-                val yearlyBudget = yearlyBudgetInput.toDoubleOrNull() ?: 0.0
-                val monthlyMaxGoal = monthlyMaxInput.toDoubleOrNull() ?: 0.0
-                val monthlyMinGoal = monthlyMinInput.toDoubleOrNull() ?: 0.0
-
-                viewModel.setBudget(yearlyBudget, monthlyMaxGoal, monthlyMinGoal)
-
-                navController.navigate("transaction")
+                val settings = BudgetSettings(
+                    monthlyBudget = monthlyBudget.toDoubleOrNull() ?: 0.0,
+                    monthlyMaxGoal = monthlyMaxGoal.toDoubleOrNull() ?: 0.0,
+                    monthlyMinGoal = monthlyMinGoal.toDoubleOrNull() ?: 0.0
+                )
+                viewModel.saveBudgetSettings(settings)
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RoundedCornerShape(25.dp)
         ) {
-            Text("Submit")
+            Text("Submit", color = Color.White)
         }
     }
 }

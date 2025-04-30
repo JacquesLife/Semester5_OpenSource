@@ -47,7 +47,12 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                viewModel.loginUser(username, password)
+                if (username.isBlank() || password.isBlank()) {
+                    errorMessage = "Username and password cannot be blank"
+                } else {
+                    errorMessage = ""
+                    viewModel.loginUser(username, password)
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -58,8 +63,12 @@ fun LoginScreen(
 
         Button(
             onClick = {
-                viewModel.registerUser(User(username, password))
-                errorMessage = "Registered successfully. Now log in!"
+                if (username.isBlank() || password.isBlank()) {
+                    errorMessage = "Username and password cannot be blank"
+                } else {
+                    viewModel.registerUser(User(username, password))
+                    errorMessage = "Registered successfully. Now log in!"
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
