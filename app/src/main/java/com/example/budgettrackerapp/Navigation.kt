@@ -100,9 +100,6 @@ fun AppNavigation(viewModel: BudgetViewModel) {
 
 // Placeholder screens - you can replace these later if needed
 
-
-
-
 @Composable
 fun ProfileScreen(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
