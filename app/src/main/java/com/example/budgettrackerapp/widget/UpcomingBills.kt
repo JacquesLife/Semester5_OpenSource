@@ -36,12 +36,12 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
     )
 
     LaunchedEffect(Unit) {
-        viewModel.loadExpenses(currentDate, oneMonthLater)
+        viewModel.loadExpenses()
         viewModel.loadBudgetSettings()
     }
 
-    val expenses by viewModel.expenses.observeAsState(emptyList())
-    val budgetSettings by viewModel.budgetSettings.observeAsState()
+    val expenses by viewModel.expenses.collectAsState(emptyList())
+    val budgetSettings by viewModel.budgetSettings.collectAsState()
 
     val totalBalance = budgetSettings?.monthlyBudget ?: 0.0
     val upcomingBillsAmount = expenses.sumOf { it.amount }
@@ -185,6 +185,8 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
 
 @Composable
 fun UpcomingBillItems(expenses: List<Expense>) {
+    val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
+
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Box(modifier = Modifier.fillMaxWidth()) {
             ExpenseTextView("Upcoming Bills", fontSize = 20.sp)
@@ -193,18 +195,46 @@ fun UpcomingBillItems(expenses: List<Expense>) {
         Spacer(Modifier.height(8.dp))
 
         if (expenses.isEmpty()) {
-            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 ExpenseTextView("No upcoming bills found", fontSize = 16.sp, fontWeight = FontWeight.Medium)
             }
         } else {
             val grouped = expenses.groupBy { it.category }
             grouped.forEach { (category, items) ->
                 val total = items.sumOf { it.amount }
-                BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDate(items.first().date), Color.Red)
+                val expanded = expandedCategories[category] ?: false
+
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        expandedCategories[category] = !expanded
+                    }
+                    .padding(vertical = 8.dp)
+                ) {
+                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDate(items.first().date), Color.Red)
+
+                    if (expanded) {
+                        items.forEach { item ->
+                            BillItem(
+                                title = item.description,
+                                amount = "R%.2f".format(item.amount),
+                                icon = getCategoryIcon(item.category),
+                                date = formatDate(item.date),
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun BillItem(title: String, amount: String, icon: Int, date: String, color: Color) {

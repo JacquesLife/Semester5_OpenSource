@@ -253,7 +253,9 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     photoUri = null
                 )
                 viewModel.addExpense(expense)
-                navController?.popBackStack()
+                navController?.navigate("transaction") {
+                    popUpTo("add_expense") { inclusive = true }
+                }
             },
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))

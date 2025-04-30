@@ -52,11 +52,16 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.benchmark.macro)
     implementation(libs.androidx.navigation.runtime.android)
+    implementation ("androidx.compose.material3:material3:1.3.2")
+    implementation ("androidx.compose.ui:ui:1.8.0")
+    implementation ("androidx.compose.foundation:foundation:1.8.0" )
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
@@ -78,7 +83,7 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // Jetpack Compose ViewModel integration
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0") // Add this line
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
 
     // Jetpack Compose Navigation
     implementation("androidx.activity:activity-compose:1.7.0")
@@ -86,6 +91,6 @@ dependencies {
     // Jetpack Compose Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
 
-    // Graph dependecy
+    // Graph dependency
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

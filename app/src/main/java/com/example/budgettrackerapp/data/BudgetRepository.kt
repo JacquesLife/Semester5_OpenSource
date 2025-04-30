@@ -17,13 +17,13 @@ class BudgetRepository(
     suspend fun addExpense(expense: Expense) {
         expenseDao.insert(expense)
     }
-
-    suspend fun getExpensesBetweenDates(start: String, end: String): List<Expense> {
-        return expenseDao.getBetweenDates(start, end)
+    suspend fun loadExpenses(): List<Expense> {
+        return expenseDao.getAllExpenses()
     }
 
-    suspend fun getTotalForCategory(category: String, start: String, end: String): Double {
-        return expenseDao.getTotalForCategory(category, start, end)
+
+    suspend fun getTotalForCategory(category: String): Double {
+        return expenseDao.getTotalForCategory(category)
     }
 
     suspend fun saveBudgetSettings(settings: BudgetSettings) {

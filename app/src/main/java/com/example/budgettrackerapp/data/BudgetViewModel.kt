@@ -1,11 +1,10 @@
-
 package com.example.budgettrackerapp.data
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class BudgetViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,14 +16,15 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         db.budgetSettingsDao()
     )
 
-    private val _expenses = MutableLiveData<List<Expense>>()
-    val expenses: LiveData<List<Expense>> get() = _expenses
+    // Change from LiveData to StateFlow
+    private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
+    val expenses: StateFlow<List<Expense>> get() = _expenses
 
-    private val _loginResult = MutableLiveData<User?>()
-    val loginResult: LiveData<User?> get() = _loginResult
+    private val _loginResult = MutableStateFlow<User?>(null)
+    val loginResult: StateFlow<User?> get() = _loginResult
 
-    private val _budgetSettings = MutableLiveData<BudgetSettings?>()
-    val budgetSettings: LiveData<BudgetSettings?> get() = _budgetSettings
+    private val _budgetSettings = MutableStateFlow<BudgetSettings?>(null)
+    val budgetSettings: StateFlow<BudgetSettings?> get() = _budgetSettings
 
     fun registerUser(user: User) = viewModelScope.launch {
         repository.registerUser(user)
@@ -38,13 +38,13 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         repository.addExpense(expense)
     }
 
-    fun loadExpenses(start: String, end: String) = viewModelScope.launch {
-        _expenses.value = repository.getExpensesBetweenDates(start, end)
+    fun loadExpenses() = viewModelScope.launch {
+        _expenses.value = repository.loadExpenses()
     }
 
-    fun getTotalForCategory(category: String, start: String, end: String, callback: (Double) -> Unit) {
+    fun getTotalForCategory(category: String, callback: (Double) -> Unit) {
         viewModelScope.launch {
-            val total = repository.getTotalForCategory(category, start, end)
+            val total = repository.getTotalForCategory(category)
             callback(total)
         }
     }

@@ -83,7 +83,7 @@ fun LoginScreen(
         )
     }
 
-    val loginResult by viewModel.loginResult.observeAsState()
+    val loginResult by viewModel.loginResult.collectAsState()
 
     loginResult?.let {
         onLoginSuccess()

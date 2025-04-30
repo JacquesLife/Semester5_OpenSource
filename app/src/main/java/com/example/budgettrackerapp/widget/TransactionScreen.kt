@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -19,12 +20,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
+import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.Expense
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.material3.*
 import com.example.budgettrackerapp.ui.theme.DarkBlue
 
 @Composable
 fun TransactionScreen(navController: NavController) {
+    val viewModel: BudgetViewModel = viewModel()
+    val expenses by viewModel.expenses.collectAsState(initial = emptyList())
+
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -48,19 +57,19 @@ fun TransactionScreen(navController: NavController) {
                         end.linkTo(parent.end)
                     }
             ) {
-                Column {
-                    ExpenseTextView(
-                        text = "Hello World",
-                        fontSize = 24.sp,
-                        color = Color.White
-                    )
-                    ExpenseTextView(
-                        text = "This is a sample app",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color.White
-                    )
-                }
+//                Column {
+//                    ExpenseTextView(
+//                        text = "Hello World",
+//                        fontSize = 24.sp,
+//                        color = Color.White
+//                    )
+//                    ExpenseTextView(
+//                        text = "This is a sample app",
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 16.sp,
+//                        color = Color.White
+//                    )
+//                }
 
                 Image(
                     painter = painterResource(id = R.drawable.bell),
@@ -84,69 +93,22 @@ fun TransactionScreen(navController: NavController) {
                         bottom.linkTo(parent.bottom)
                         height = Dimension.fillToConstraints
                     },
-                navController = navController
+                navController = navController,
+                expenses = expenses
             )
         }
     }
 }
 
 @Composable
-fun CardItem(modifier: Modifier) {
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .height(200.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(DarkBlue)
-            .padding(16.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-            Column(modifier = Modifier.align(Alignment.CenterStart)) {
-                ExpenseTextView(text = "Total Balance", fontSize = 16.sp, color = Color.White)
-                ExpenseTextView(
-                    text = "R1000.00",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.dotsmenue),
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-        ) {
-            CardRowItem(
-                modifier = Modifier.align(Alignment.CenterStart),
-                title = "Income",
-                amount = "R3,494",
-                image = R.drawable.uparrow
-            )
-            CardRowItem(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                title = "Expense",
-                amount = "R1,230",
-                image = R.drawable.downarrow
-            )
-        }
-    }
-}
-
-@Composable
-fun TransactionList(modifier: Modifier, navController: NavController) {
+fun TransactionList(modifier: Modifier, navController: NavController, expenses: List<Expense>) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Transactions", "Upcoming Bills")
 
+    val groupedExpenses = expenses.groupBy { it.category }
+    val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
+
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
-        // Tab switcher
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,142 +145,166 @@ fun TransactionList(modifier: Modifier, navController: NavController) {
             }
         }
 
-        // Show transactions when on the Transactions tab
-        RecentTransactions()
-    }
-}
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
+                ExpenseTextView(
+                    text = "Collapse All",
+                    fontSize = 14.sp,
+                    color = Color.Blue,
+                    modifier = Modifier.align(Alignment.CenterEnd).clickable {
+                        groupedExpenses.keys.forEach { expandedCategories[it] = false }
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
 
-@Composable
-fun RecentTransactions() {
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            ExpenseTextView(text = "Recent Transactions", fontSize = 20.sp)
-            ExpenseTextView(
-                text = "See All",
-                fontSize = 16.sp,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
+            groupedExpenses.forEach { (category, items) ->
+                val expanded = expandedCategories[category] ?: false
+                val total = items.sumOf { it.amount }
+                val icon = when (category) {
+                    "Food" -> R.drawable.food
+                    "Transportation" -> R.drawable.car
+                    "Shopping" -> R.drawable.shopping
+                    "Entertainment" -> R.drawable.entertainment
+                    "Healthcare" -> R.drawable.health
+                    "Rent" -> R.drawable.house
+                    "Phone and Internet" -> R.drawable.communication
+                    "Utilities" -> R.drawable.utilities
+                    "Saving" -> R.drawable.savings
+                    "Investment" -> R.drawable.investment
+                    else -> R.drawable.other
+                }
 
-        TransactionItem(
-            title = "Food",
-            amount = "R200.00",
-            icon = R.drawable.food,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Transport",
-            amount = "R200.00",
-            icon = R.drawable.car,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Groceries",
-            amount = "R200.00",
-            icon = R.drawable.shopping,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Phone and Internet",
-            amount = "R200.00",
-            icon = R.drawable.communication,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Entertainment",
-            amount = "R200.00",
-            icon = R.drawable.entertainment,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Healthcare",
-            amount = "R200.00",
-            icon = R.drawable.health,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Rent",
-            amount = "R200.00",
-            icon = R.drawable.house,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Utilities",
-            amount = "R200.00",
-            icon = R.drawable.utilities,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Savings",
-            amount = "R200.00",
-            icon = R.drawable.savings,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Investment",
-            amount = "R200.00",
-            icon = R.drawable.investment,
-            date = "Today",
-            color = Color.Red
-        )
-        TransactionItem(
-            title = "Other",
-            amount = "R200.00",
-            icon = R.drawable.other,
-            date = "Today",
-            color = Color.Red
-        )
-    }
-}
-
-@Composable
-fun CardRowItem(modifier: Modifier, title: String, amount: String, image: Int) {
-    Column(modifier = modifier) {
-        Row {
-            Image(
-                painter = painterResource(id = image),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            ExpenseTextView(text = title, fontSize = 16.sp, color = Color.White)
-        }
-        ExpenseTextView(text = amount, fontSize = 20.sp, color = Color.White)
-    }
-}
-
-@Composable
-fun TransactionItem(title: String, amount: String, icon: Int, date: String, color: Color) {
-    Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                modifier = Modifier.size(50.dp)
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Column {
-                ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                ExpenseTextView(text = date, fontSize = 12.sp)
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { expandedCategories[category] = !expanded }
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        ExpenseTextView(
+                            text = "$category - Total: R$total",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    if (expanded) {
+                        items.forEach { expense ->
+                            TransactionItem(
+                                title = expense.category,
+                                amount = "R${expense.amount}",
+                                icon = icon,
+                                date = expense.date,
+                                color = Color.Red
+                            )
+                        }
+                    }
+                }
             }
         }
-        ExpenseTextView(
-            text = amount,
-            fontSize = 20.sp,
-            modifier = Modifier.align(Alignment.CenterEnd),
-            color = color,
-            fontWeight = FontWeight.SemiBold
-        )
     }
+}
+
+@Composable
+fun CardItem(modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        shadowElevation = 4.dp,  // Correct parameter for elevation
+        color = Color.White  // Correct parameter for background color
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Title
+            ExpenseTextView(
+                text = "Card Title",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Description
+            ExpenseTextView(
+                text = "This is a detailed description of the card content. You can add more information here.",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Action Button
+            var isVisible by remember { mutableStateOf(true) }
+
+            if (isVisible) {
+                Button(
+                    onClick = { isVisible = false },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkBlue)
+                ) {
+                    Text(
+                        text = "Action",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TransactionItem(
+    title: String,
+    amount: String,
+    icon: Int,
+    date: String,
+    color: Color
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(color.copy(alpha = 0.1f), shape = RoundedCornerShape(8.dp))
+            .padding(8.dp)
+    ) {
+        Image(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            ExpenseTextView(text = date, fontSize = 14.sp, color = Color.Gray)
+        }
+        ExpenseTextView(text = amount, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = color)
+    }
+}
+
+@Composable
+fun ExpenseTextView(
+    text: String,
+    fontSize: TextUnit = 16.sp,
+    fontWeight: FontWeight = FontWeight.Normal,
+    color: Color = Color.Black
+) {
+    Text(
+        text = text,
+        fontSize = fontSize,
+        fontWeight = fontWeight,
+        color = color
+    )
 }
