@@ -29,14 +29,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), userId: Int) {
     val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
     val oneMonthLater = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
         Calendar.getInstance().apply { add(Calendar.MONTH, 1) }.time
     )
 
     LaunchedEffect(Unit) {
-        viewModel.loadExpenses()
+        viewModel.loadExpenses(userId)
         viewModel.loadBudgetSettings()
     }
 

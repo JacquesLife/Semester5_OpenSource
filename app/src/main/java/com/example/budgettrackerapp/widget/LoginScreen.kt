@@ -14,7 +14,7 @@ import com.example.budgettrackerapp.data.User
 @Composable
 fun LoginScreen(
     viewModel: BudgetViewModel = viewModel(),
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: (Int) -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -66,7 +66,12 @@ fun LoginScreen(
                 if (username.isBlank() || password.isBlank()) {
                     errorMessage = "Username and password cannot be blank"
                 } else {
-                    viewModel.registerUser(User(username, password))
+                    viewModel.registerUser(
+                        User(
+                            username = username,
+                            password = password
+                        )
+                    )
                     errorMessage = "Registered successfully. Now log in!"
                 }
             },
@@ -85,7 +90,7 @@ fun LoginScreen(
 
     val loginResult by viewModel.loginResult.collectAsState()
 
-    loginResult?.let {
-        onLoginSuccess()
+    loginResult?.let { user ->
+        onLoginSuccess(user.userId)
     }
 }

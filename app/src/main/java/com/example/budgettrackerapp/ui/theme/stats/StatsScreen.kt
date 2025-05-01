@@ -25,17 +25,20 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
+import com.example.budgettrackerapp.data.User
 import com.example.budgettrackerapp.widget.getCategoryIcon
 import com.example.budgettrackerapp.widget.formatDate
 
 @Composable
-fun StatsScreen(navController: NavController, viewModel: BudgetViewModel = viewModel())
+fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId: Int)
 {
     // Load data from the databases
     LaunchedEffect(Unit) {
-        viewModel.loadExpenses()
+        val userId = viewModel.loginResult.value?.userId ?: return@LaunchedEffect
+        viewModel.loadExpenses(userId)
         viewModel.loadBudgetSettings()
     }
+
 
     val expenses = viewModel.expenses.collectAsState(emptyList()).value
 

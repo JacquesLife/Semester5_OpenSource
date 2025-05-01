@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -25,18 +24,17 @@ import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.material3.*
 import com.example.budgettrackerapp.ui.theme.DarkBlue
+import androidx.compose.ui.unit.TextUnit
 
 @Composable
-fun TransactionScreen(navController: NavController) {
-    val viewModel: BudgetViewModel = viewModel()
+fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, userId: Int) {
     val expenses by viewModel.expenses.collectAsState(initial = emptyList())
 
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
+
             Image(
                 painter = painterResource(id = R.drawable.toppage),
                 contentDescription = null,
@@ -57,26 +55,13 @@ fun TransactionScreen(navController: NavController) {
                         end.linkTo(parent.end)
                     }
             ) {
-//                Column {
-//                    ExpenseTextView(
-//                        text = "Hello World",
-//                        fontSize = 24.sp,
-//                        color = Color.White
-//                    )
-//                    ExpenseTextView(
-//                        text = "This is a sample app",
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 16.sp,
-//                        color = Color.White
-//                    )
-//                }
-
                 Image(
                     painter = painterResource(id = R.drawable.bell),
                     contentDescription = null,
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
+
             CardItem(modifier = Modifier.constrainAs(card) {
                 top.linkTo(nameRow.bottom)
                 start.linkTo(parent.start)
@@ -94,14 +79,20 @@ fun TransactionScreen(navController: NavController) {
                         height = Dimension.fillToConstraints
                     },
                 navController = navController,
-                expenses = expenses
+                expenses = expenses,
+                userId = userId
             )
         }
     }
 }
 
 @Composable
-fun TransactionList(modifier: Modifier, navController: NavController, expenses: List<Expense>) {
+fun TransactionList(
+    modifier: Modifier,
+    navController: NavController,
+    expenses: List<Expense>,
+    userId: Int
+) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Transactions", "Upcoming Bills")
 
@@ -131,7 +122,7 @@ fun TransactionList(modifier: Modifier, navController: NavController, expenses: 
                         .clickable {
                             selectedTab = index
                             if (index == 1) {
-                                navController.navigate("upcoming_bills")
+                                navController.navigate("upcoming_bills/$userId")
                             }
                         },
                     contentAlignment = Alignment.Center
@@ -152,11 +143,14 @@ fun TransactionList(modifier: Modifier, navController: NavController, expenses: 
                     text = "Collapse All",
                     fontSize = 14.sp,
                     color = Color.Blue,
-                    modifier = Modifier.align(Alignment.CenterEnd).clickable {
-                        groupedExpenses.keys.forEach { expandedCategories[it] = false }
-                    }
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .clickable {
+                            groupedExpenses.keys.forEach { expandedCategories[it] = false }
+                        }
                 )
             }
+
             Spacer(modifier = Modifier.height(8.dp))
 
             groupedExpenses.forEach { (category, items) ->
@@ -218,13 +212,12 @@ fun CardItem(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        shadowElevation = 4.dp,  // Correct parameter for elevation
-        color = Color.White  // Correct parameter for background color
+        shadowElevation = 4.dp,
+        color = Color.White
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Title
             ExpenseTextView(
                 text = "Card Title",
                 fontSize = 20.sp,
@@ -234,7 +227,6 @@ fun CardItem(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Description
             ExpenseTextView(
                 text = "This is a detailed description of the card content. You can add more information here.",
                 fontSize = 16.sp,
@@ -243,7 +235,6 @@ fun CardItem(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Action Button
             var isVisible by remember { mutableStateOf(true) }
 
             if (isVisible) {
@@ -299,12 +290,14 @@ fun ExpenseTextView(
     text: String,
     fontSize: TextUnit = 16.sp,
     fontWeight: FontWeight = FontWeight.Normal,
-    color: Color = Color.Black
+    color: Color = Color.Black,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
         fontSize = fontSize,
         fontWeight = fontWeight,
-        color = color
+        color = color,
+        modifier = modifier
     )
 }

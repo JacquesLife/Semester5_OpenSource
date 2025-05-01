@@ -16,7 +16,6 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         db.budgetSettingsDao()
     )
 
-    // Change from LiveData to StateFlow
     private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
     val expenses: StateFlow<List<Expense>> get() = _expenses
 
@@ -38,13 +37,13 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         repository.addExpense(expense)
     }
 
-    fun loadExpenses() = viewModelScope.launch {
-        _expenses.value = repository.loadExpenses()
+    fun loadExpenses(userId: Int) = viewModelScope.launch {
+        _expenses.value = repository.loadExpenses(userId)
     }
 
-    fun getTotalForCategory(category: String, callback: (Double) -> Unit) {
+    fun getTotalForCategory(category: String, userId: Int, callback: (Double) -> Unit) {
         viewModelScope.launch {
-            val total = repository.getTotalForCategory(category)
+            val total = repository.getTotalForCategory(category, userId)
             callback(total)
         }
     }

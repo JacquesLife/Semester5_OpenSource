@@ -45,11 +45,12 @@ import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
 import com.example.budgettrackerapp.widget.ExpenseTextView
+import okhttp3.internal.userAgent
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00") {
+fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00", userId: Int) {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -102,6 +103,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
             DataForm(
                 navController = navController,
                 initialAmount = initialAmount,
+                userId,
                 modifier = Modifier
                     .padding(top = 60.dp)
                     .constrainAs(card) {
@@ -115,7 +117,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
 }
 
 @Composable
-fun DataForm(navController: NavController? = null, initialAmount: String = "0.00", modifier: Modifier) {
+fun DataForm(navController: NavController? = null, initialAmount: String = "0.00", userId: Int, modifier: Modifier) {
     val context = LocalContext.current
     var selectedCategory by remember { mutableStateOf("Select Category") }
     var amount by remember { mutableStateOf(initialAmount) }
@@ -308,10 +310,12 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     endTime = "",
                     description = "",
                     category = selectedCategory,
-                    photoUri = selectedImageUri?.toString()
+                    photoUri = null,
+                    userOwnerId = userId
+                    //photoUri = selectedImageUri?.toString()
                 )
                 viewModel.addExpense(expense)
-                navController?.navigate("transaction") {
+                navController?.navigate("transaction/$userId") {
                     popUpTo("add_expense") { inclusive = true }
                 }
             },
@@ -324,8 +328,8 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
     }
 }
 
-@Composable
-@Preview(showBackground = true)
-fun AddExpensePreview() {
-    AddExpense(rememberNavController())
-}
+//@Composable
+//@Preview(showBackground = true)
+//fun AddExpensePreview() {
+//    AddExpense(rememberNavController())
+//}

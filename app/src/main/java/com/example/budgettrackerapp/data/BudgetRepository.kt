@@ -1,6 +1,7 @@
 
 package com.example.budgettrackerapp.data
 
+
 class BudgetRepository(
     private val userDao: UserDao,
     private val expenseDao: ExpenseDao,
@@ -17,13 +18,13 @@ class BudgetRepository(
     suspend fun addExpense(expense: Expense) {
         expenseDao.insert(expense)
     }
-    suspend fun loadExpenses(): List<Expense> {
-        return expenseDao.getAllExpenses()
+    suspend fun loadExpenses(userId: Int): List<Expense> {
+        return expenseDao.getAllExpenses(userId)
     }
 
 
-    suspend fun getTotalForCategory(category: String): Double {
-        return expenseDao.getTotalForCategory(category)
+    suspend fun getTotalForCategory(category: String, userId: Int): Double {
+        return expenseDao.getTotalForCategory(category, userId)
     }
 
     suspend fun saveBudgetSettings(settings: BudgetSettings) {

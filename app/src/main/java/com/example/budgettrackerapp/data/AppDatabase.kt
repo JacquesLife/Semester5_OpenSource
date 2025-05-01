@@ -1,12 +1,17 @@
 
 package com.example.budgettrackerapp.data
 
+
+import com.example.budgettrackerapp.data.Expense
 import android.content.Context
+import androidx.databinding.adapters.Converters
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
-@Database(entities = [User::class, Expense::class, BudgetSettings::class], version = 3)
+@Database(entities = [User::class, Expense::class, BudgetSettings::class], version = 4)
+//@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun expenseDao(): ExpenseDao

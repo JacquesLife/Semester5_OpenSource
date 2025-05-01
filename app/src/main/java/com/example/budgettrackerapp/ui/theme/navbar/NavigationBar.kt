@@ -23,13 +23,13 @@ data class BottomNavItem(
 )
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavController, userId: Int) {
 
     val items = listOf(
-        BottomNavItem("Home", R.drawable.home, "home"),
-        BottomNavItem("stats", R.drawable.chart, "stats"),
+        BottomNavItem("Home", R.drawable.home, "home/$userId"),
+        BottomNavItem("stats", R.drawable.chart, "stats/$userId"),
         BottomNavItem("Wallet", R.drawable.wallet, "wallet"),
-        BottomNavItem("profile", R.drawable.user, "profile")
+        BottomNavItem("profile", R.drawable.user, "profile/$userId")
     )
 
     Box(
@@ -45,8 +45,7 @@ fun BottomNavBar(navController: NavController) {
 
             items.forEachIndexed { index, item ->
                 if (index == 2) {
-                    // Create space for the FAB in the middle
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Space for FAB
                 }
 
                 NavigationBarItem(
@@ -57,7 +56,7 @@ fun BottomNavBar(navController: NavController) {
                             tint = if (currentRoute == item.route) Color(0xFF5B8DEF) else Color.Gray
                         )
                     },
-                    label = null, // Remove labels to match the design
+                    label = null,
                     selected = currentRoute == item.route,
                     onClick = {
                         if (currentRoute != item.route) {
@@ -70,24 +69,20 @@ fun BottomNavBar(navController: NavController) {
                     },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color(0xFF5B8DEF),
-                        indicatorColor = Color.White, // Remove indicator background
+                        indicatorColor = Color.White,
                         unselectedIconColor = Color.Gray
                     )
                 )
 
                 if (index == 1) {
-                    // Create space for the FAB in the middle
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Space for FAB
                 }
             }
         }
 
-        // Floating Action Button in the center - Navigate to AddExpense screen
         FloatingActionButton(
             onClick = {
-                // Navigate to the AddExpense screen
-                navController.navigate("add_expense") {
-                    // Optional: You can add navigation options here if needed
+                navController.navigate("add_expense?initialAmount=0.00&userId=$userId") {
                     launchSingleTop = true
                 }
             },

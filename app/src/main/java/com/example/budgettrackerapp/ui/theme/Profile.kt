@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.data.BudgetViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileScreen(
@@ -22,19 +21,20 @@ fun ProfileScreen(
     username: String = "John Doe",
     rank: String = "Gold"
 ) {
-    // Observe budget settings and expenses
     val budgetSettings by viewModel.budgetSettings.collectAsState()
     val expenses by viewModel.expenses.collectAsState()
 
-    // Calculate total and remaining budget
     val totalBudget = budgetSettings?.monthlyBudget ?: 0.0
     val spent = expenses.sumOf { it.amount }
-    val remainingBudget = totalBudget - spent
+    val remainingBudget = (totalBudget - spent).coerceAtLeast(0.0)
 
-    // Trigger loading if needed
-    LaunchedEffect(Unit) {
-        viewModel.loadBudgetSettings()
-        viewModel.loadExpenses()
+    val user = viewModel.loginResult.collectAsState().value
+
+    LaunchedEffect(user) {
+        if (user != null) {
+            viewModel.loadBudgetSettings()
+            viewModel.loadExpenses(user.userId)
+        }
     }
 
     Column(
@@ -44,7 +44,6 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Profile placeholder
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -80,7 +79,7 @@ fun ProfileScreen(
         Text(
             text = "Remaining: R %.2f".format(remainingBudget),
             style = MaterialTheme.typography.titleLarge,
-            color = Color(0xFF2E7D32) // dark green
+            color = Color(0xFF2E7D32)
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -89,7 +88,7 @@ fun ProfileScreen(
             onClick = {
                 viewModel.logout()
                 navController.navigate("login") {
-                    popUpTo("home") { inclusive = true }
+                    popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
             },

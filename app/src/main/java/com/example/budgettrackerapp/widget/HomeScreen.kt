@@ -16,9 +16,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.data.BudgetSettings
 import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.User
 
 @Composable
-fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController) {
+fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController, userId: Int) {
     val context = LocalContext.current
 
     var monthlyBudget by remember { mutableStateOf("") }
@@ -74,7 +75,7 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
                 viewModel.saveBudgetSettings(settings)
 
                 // Navigate to the upcoming bills screen
-                navController.navigate("upcoming_bills")
+                navController.navigate("upcoming_bills/$userId")
             },
             modifier = Modifier
                 .fillMaxWidth()
