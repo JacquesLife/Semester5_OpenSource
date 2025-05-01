@@ -1,49 +1,68 @@
 package com.example.budgettrackerapp.ui.theme.stats
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.compose.ui.graphics.toArgb
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.utils.ColorTemplate
-import androidx.navigation.NavController
-
-
+import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.Expense
+import com.example.budgettrackerapp.widget.getCategoryIcon
+import com.example.budgettrackerapp.widget.formatDate
 
 @Composable
-fun StatsScreen(navController: NavController) {
-    val categories = listOf(
-        "Food", "Transportation", "Entertainment", "Rent", "Other",
-        "Shopping", "Healthcare", "Phone and Internet", "Utilities", "Saving", "Investment"
-    )
+fun StatsScreen(navController: NavController, viewModel: BudgetViewModel = viewModel())
+{
+    // Load data from the databases
+    LaunchedEffect(Unit) {
+        viewModel.loadExpenses()
+        viewModel.loadBudgetSettings()
+    }
 
-    val values = listOf(
-        200f, 150f, 100f, 600f, 50f,
-        300f, 250f, 100f, 150f, 400f, 350f
-    )
+    val expenses = viewModel.expenses.collectAsState(emptyList()).value
 
+    // Grouping the expenses by category and amount
+    val grouped = expenses.groupBy { it.category }
+    val categories = grouped.keys.toList()
+    val values = grouped.values.map { list -> list.sumOf { it.amount }.toFloat() }
     val total = values.sum()
-    val colors = ColorTemplate.MATERIAL_COLORS.toList()
 
-    val upcomingPayments = listOf(
-        "Rent - R 1200 - Due: 01 May 2024",
-        "Electricity - R 350 - Due: 05 May 2024",
-        "Internet - R 500 - Due: 10 May 2024",
-        "Insurance - R 800 - Due: 15 May 2024"
+    // Setting a color for each expense category
+    val themeColors = MaterialTheme.colorScheme
+    val baseColors = listOf(
+        themeColors.primary,
+        themeColors.secondary,
+        themeColors.tertiary,
+        Color(0xFF81D4FA), // light blue
+        Color(0xFFAED581), // light green
+        Color(0xFFFF8A65), // orange
+        Color(0xFFFFD54F), // yellow
+        Color(0xFFBA68C8), // purple
+        Color(0xFF4DB6AC), // teal
+        Color(0xFF7986CB), // blue grey
+        Color(0xFFE57373)  // red
     )
+    val sliceColors = categories.mapIndexed { index, _ -> baseColors[index % baseColors.size].toArgb() }
 
     val scrollState = rememberScrollState()
-
 
     Column(
         modifier = Modifier
@@ -51,34 +70,36 @@ fun StatsScreen(navController: NavController) {
             .padding(16.dp)
             .verticalScroll(scrollState)
     ) {
-        Text("Stats Screen", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Stats",
+            style = MaterialTheme.typography.headlineSmall,
+            color = themeColors.primary
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Pie Chart Composable
+        // Updating the pie chart from the database
         AndroidView(
             factory = { context ->
                 PieChart(context).apply {
-                    val entries = categories.zip(values).map {
-                        PieEntry(it.second, it.first)
-                    }
-
-                    val dataSet = PieDataSet(entries, "")
-                    dataSet.setColors(colors)
-                    dataSet.setDrawValues(false) // Don't show % inside pie
-                    dataSet.sliceSpace = 2f
-
-                    val pieData = PieData(dataSet)
-
-                    this.data = pieData
-                    this.setUsePercentValues(true)
-                    this.description.isEnabled = false
-                    this.legend.isEnabled = false
-                    this.setDrawEntryLabels(false)
-                    this.setHoleRadius(0f)
-                    this.setTransparentCircleRadius(0f)
-                    this.invalidate()
+                    setUsePercentValues(true)
+                    description.isEnabled = false
+                    legend.isEnabled = false
+                    setDrawEntryLabels(false)
+                    setHoleRadius(0f)
+                    setTransparentCircleRadius(0f)
                 }
+            },
+            update = { chart: PieChart ->
+                val entries = categories.mapIndexed { i, cat -> PieEntry(values[i], cat) }
+                val dataSet = PieDataSet(entries, "").apply {
+                    colors = sliceColors.toMutableList()
+                    setDrawValues(false)
+                    sliceSpace = 2f
+                }
+                chart.data = PieData(dataSet)
+                chart.notifyDataSetChanged()
+                chart.invalidate()
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,8 +108,9 @@ fun StatsScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Creating a legend for the categories in the pie chart
         categories.zip(values).forEachIndexed { index, (category, value) ->
-            val percentage = (value / total) * 100
+            val percentage = if (total > 0f) (value / total) * 100 else 0f
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 4.dp)
@@ -96,30 +118,67 @@ fun StatsScreen(navController: NavController) {
                 Box(
                     modifier = Modifier
                         .size(16.dp)
-                        .background(Color(colors[index % colors.size]))
+                        .background(color = Color(sliceColors[index]))
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "$category - ${"%.1f".format(percentage)}%",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = themeColors.onBackground
                 )
             }
         }
 
-        // Upcoming Payments Section
-        Text("Upcoming Payments", style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Listing future Payments
+        Text(
+            text = "Payments",
+            style = MaterialTheme.typography.titleLarge,
+            color = themeColors.primary
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // List of upcoming payments
         Column(modifier = Modifier.fillMaxWidth()) {
-            upcomingPayments.forEach { payment ->
+            val upcoming = expenses.sortedBy { it.date }
+            if (upcoming.isEmpty()) {
                 Text(
-                    text = payment,
+                    text = "No upcoming payments",
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    color = themeColors.onBackground
                 )
+            } else {
+                upcoming.forEach { expense ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = getCategoryIcon(expense.category)),
+                            contentDescription = expense.category,
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = expense.category,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = themeColors.onBackground
+                            )
+                            Text(
+                                text = "${expense.description} - R%.2f - Due: ${formatDate(expense.date)}".format(expense.amount),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = themeColors.onBackground
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
+//
