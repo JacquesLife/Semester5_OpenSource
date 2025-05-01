@@ -56,4 +56,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     fun loadBudgetSettings() = viewModelScope.launch {
         _budgetSettings.value = repository.getBudgetSettings()
     }
+
+    fun logout() {
+        _loginResult.value = null
+    }
 }

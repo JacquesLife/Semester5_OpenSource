@@ -11,9 +11,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.budgettrackerapp.data.BudgetViewModel
 
 @Composable
-fun ProfileScreen(username: String = "John Doe", rank: String = "Gold", totalBudget: Double = 5000.0, remainingBudget: Double = 2750.0) {
+fun ProfileScreen(
+    navController: NavController,
+    viewModel: BudgetViewModel,
+    username: String = "John Doe",
+    rank: String = "Gold",
+    totalBudget: Double = 5000.0,
+    remainingBudget: Double = 2750.0
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,5 +68,20 @@ fun ProfileScreen(username: String = "John Doe", rank: String = "Gold", totalBud
             style = MaterialTheme.typography.titleLarge,
             color = Color(0xFF2E7D32) // dark green
         )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Button(
+            onClick = {
+                viewModel.logout()
+                navController.navigate("login") {
+                    popUpTo("home") { inclusive = true }
+                    launchSingleTop = true
+                }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+        ) {
+            Text("Logout", color = Color.White)
+        }
     }
 }
