@@ -1,13 +1,16 @@
 package com.example.budgettrackerapp.ui.theme.rewards
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment as UiAlignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
+import com.example.budgettrackerapp.R
 
 @Composable
 fun RewardsScreen() {
@@ -53,37 +56,47 @@ fun RewardsScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TierCard("Bronze", 0, 100)
-        TierCard("Silver", 101, 250)
-        TierCard("Gold", 251, 500)
-        TierCard("Platinum", 501, Int.MAX_VALUE)
+        TierCard("Bronze", 0, 100, R.drawable.bronze)
+        TierCard("Silver", 101, 250, R.drawable.silver)
+        TierCard("Gold", 251, 500, R.drawable.gold)
+        TierCard("Platinum", 501, Int.MAX_VALUE, R.drawable.platinum)
     }
 }
 
 @Composable
-fun TierCard(tierName: String, minPoints: Int, maxPoints: Int) {
+fun TierCard(tierName: String, minPoints: Int, maxPoints: Int, iconRes: Int) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
-            horizontalAlignment = UiAlignment.Start
+            verticalAlignment = UiAlignment.CenterVertically
         ) {
-            Text(text = tierName, style = MaterialTheme.typography.titleMedium)
-            Text(
-                text = "Points: $minPoints - ${if (maxPoints == Int.MAX_VALUE) "∞" else maxPoints}",
-                fontSize = 14.sp,
-                color = Color.DarkGray
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = "$tierName Icon",
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 16.dp)
             )
+
+            Column {
+                Text(text = tierName, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = "Points: $minPoints - ${if (maxPoints == Int.MAX_VALUE) "∞" else maxPoints}",
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+            }
         }
     }
 }
-// Get users
+
 fun getUserTier(points: Int): String {
     return when {
         points <= 100 -> "Bronze"

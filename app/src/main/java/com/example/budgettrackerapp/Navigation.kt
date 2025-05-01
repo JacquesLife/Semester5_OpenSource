@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
+import com.example.budgettrackerapp.ui.theme.profile.ProfileScreen
 import com.example.budgettrackerapp.ui.theme.rewards.RewardsScreen
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
 import com.example.budgettrackerapp.ui.theme.stats.StatsScreen
@@ -31,6 +32,10 @@ import com.example.budgettrackerapp.widget.UpcomingBillsScreen
 fun AppNavigation(viewModel: BudgetViewModel) {
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    // Get the current username (null-safe)
+    val loggedInUser = viewModel.loginResult.collectAsState().value
+    val currentUsername = loggedInUser?.username ?: "User"
 
     Scaffold(
         bottomBar = {
@@ -60,12 +65,16 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     StatsScreen(navController)
                 }
                 composable("wallet") {
-                    RewardsScreen() // No arguments are needed here
+                    RewardsScreen()
+                }
+                composable("profile") {
+                    ProfileScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        username = currentUsername
+                    )
                 }
 
-                composable("profile") {
-                    ProfileScreen(navController)
-                }
                 composable("login") {
                     LoginScreen(
                         viewModel = viewModel,
@@ -95,14 +104,5 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                 }
             }
         }
-    }
-}
-
-// Placeholder screens - you can replace these later if needed
-
-@Composable
-fun ProfileScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Profile Screen")
     }
 }
