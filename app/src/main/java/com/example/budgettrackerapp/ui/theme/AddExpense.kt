@@ -1,6 +1,9 @@
 package com.example.budgettrackerapp.ui.theme
 
 import android.app.DatePickerDialog
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -25,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +40,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
@@ -115,6 +121,14 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
     var amount by remember { mutableStateOf(initialAmount) }
     var date by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Image picker launcher
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        selectedImageUri = uri
+    }
 
     // Calendar setup
     val calendar = remember { Calendar.getInstance() }
@@ -237,6 +251,50 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             readOnly = true
         )
 
+        Spacer(modifier = Modifier.size(16.dp))
+
+        ExpenseTextView(text = "PHOTO", fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.size(4.dp))
+
+        // Photo selection button
+        OutlinedButton(
+            onClick = { photoPickerLauncher.launch("image/*") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AddAPhoto,
+                    contentDescription = "Add Photo",
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = if (selectedImageUri == null) "Add Receipt Image" else "Change Image")
+            }
+        }
+
+        // Show selected image preview
+        selectedImageUri?.let { uri ->
+            Spacer(modifier = Modifier.size(8.dp))
+            Box(
+                modifier = Modifier
+                    .height(200.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray)
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(uri),
+                    contentDescription = "Selected Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.size(24.dp))
 
         val viewModel: BudgetViewModel = viewModel()
@@ -250,7 +308,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     endTime = "",
                     description = "",
                     category = selectedCategory,
-                    photoUri = null
+                    photoUri = selectedImageUri?.toString()
                 )
                 viewModel.addExpense(expense)
                 navController?.navigate("transaction") {
