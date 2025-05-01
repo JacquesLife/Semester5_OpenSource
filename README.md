@@ -6,7 +6,7 @@ As a team, we have worked together to create a functional prototype with a worki
 The following features were included in the prototype:
 1. Sign up and Login
 2. Setting a monthly budget
-3. Adding expenses that are categorized per expense as well as creating your own category
+3. Adding expenses that are categorized per expense as well as enabling users to create their own category
 4. A home page displaying the users monthly budget along with their expenses and upcoming payments
 5. A stats page containing a breakdown of the users expenses per category
 6. A rewards page containing a tier system based on the users monthly savings
