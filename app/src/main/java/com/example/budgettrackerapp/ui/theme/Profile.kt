@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -13,16 +13,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.data.BudgetViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
     viewModel: BudgetViewModel,
     username: String = "John Doe",
-    rank: String = "Gold",
-    totalBudget: Double = 5000.0,
-    remainingBudget: Double = 2750.0
+    rank: String = "Gold"
 ) {
+    // Observe budget settings and expenses
+    val budgetSettings by viewModel.budgetSettings.collectAsState()
+    val expenses by viewModel.expenses.collectAsState()
+
+    // Calculate total and remaining budget
+    val totalBudget = budgetSettings?.monthlyBudget ?: 0.0
+    val spent = expenses.sumOf { it.amount }
+    val remainingBudget = totalBudget - spent
+
+    // Trigger loading if needed
+    LaunchedEffect(Unit) {
+        viewModel.loadBudgetSettings()
+        viewModel.loadExpenses()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +44,7 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        // Gray circle placeholder for profile image
+        // Profile placeholder
         Box(
             modifier = Modifier
                 .size(120.dp)
