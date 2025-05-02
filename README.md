@@ -129,5 +129,7 @@ For contributions or issues, please reach out to us or fork this repo and enhanc
 
 https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
 https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
+https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
+https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
 
 
