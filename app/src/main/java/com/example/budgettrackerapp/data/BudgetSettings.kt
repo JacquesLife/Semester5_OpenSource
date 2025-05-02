@@ -3,7 +3,7 @@ package com.example.budgettrackerapp.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
+//Budget settings table
 @Entity(tableName = "budget_settings")
 data class BudgetSettings(
     @PrimaryKey val id: Int = 1,
