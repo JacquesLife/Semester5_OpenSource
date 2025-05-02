@@ -1,3 +1,8 @@
+/// Reference: https://www.youtube.com/watch?v=-Kj9T1sa6zk
+/// The login screen will handle the login and register functionality for the user it will handle
+/// some error handling ensuring feels are not left blank then pass then save the user to the database
+/// if successful it will navigate to the home screen
+
 package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.layout.*
@@ -102,3 +107,4 @@ fun LoginScreen(
     }
 }
 
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

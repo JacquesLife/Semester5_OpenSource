@@ -1,6 +1,11 @@
+/// References: https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
+/// This is out non-functional rewards screen for part 3 we are working on it
+/// it will display the users rank depending on how well they have achieved their monthly goals
+/// Tiers include bronze, silver, gold, and platinum
+
+
 package com.example.budgettrackerapp.ui.theme.rewards
 
-// Import necessary Compose and AndroidX UI libraries
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -14,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.budgettrackerapp.R
 import kotlin.math.min
 
-// Main composable function for the Rewards screen
+
 @Composable
 fun RewardsScreen() {
     val userPoints = 230 // Dummy value for user points (replace with real user data later)
@@ -29,7 +34,6 @@ fun RewardsScreen() {
     val progressFraction = calculateProgress(userPoints, minPoints, maxPoints)
 
     // Layout for the rewards screen using a vertical column
-    //https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -174,3 +178,5 @@ fun calculateProgress(points: Int, minPoints: Int, maxPoints: Int): Float {
     return if (maxPoints == Int.MAX_VALUE) 1f // Already at top tier
     else min((points - minPoints).toFloat() / (maxPoints - minPoints), 1f)
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

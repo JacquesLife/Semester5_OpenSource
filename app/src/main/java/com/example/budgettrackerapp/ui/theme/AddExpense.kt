@@ -1,3 +1,8 @@
+/// Reference: https://www.youtube.com/watch?v=-Kj9T1sa6zk
+/// https://www.svgrepo.com/collection/responsive-flat-icons/
+/// This page is responsible for creating an expense with an image, date, and category and amount it also
+/// pass this logic to the database to be stored
+
 package com.example.budgettrackerapp.ui.theme
 
 import android.app.DatePickerDialog
@@ -346,3 +351,5 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

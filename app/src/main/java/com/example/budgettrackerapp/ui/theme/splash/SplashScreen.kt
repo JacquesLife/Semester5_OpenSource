@@ -1,3 +1,7 @@
+/// Reference: https://www.youtube.com/watch?v=Q0gRqbtFLcw
+/// This is a basic splash screen that will display the app logo and a welcome message
+/// We have a buck as our logo it will display for 3 seconds and then navigate to the login screen
+
 package com.example.budgettrackerapp.ui.theme.splash
 
 import androidx.compose.foundation.Image
@@ -69,3 +73,5 @@ fun SplashScreen(navController: NavController) {
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

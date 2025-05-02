@@ -1,3 +1,7 @@
+/// References:  https://www.youtube.com/watch?v=LfHkAUzup5E
+/// This is the navigation bar it contains the bottom navigation bar visuals such as svgs and the FAB
+/// While the navigation.kt file handles the logic this file handles the visuals
+
 package com.example.budgettrackerapp.ui.theme.navbar
 
 import androidx.compose.foundation.layout.*
@@ -113,3 +117,5 @@ fun BottomNavBar(navController: NavController, userId: Int) {
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

@@ -1,3 +1,7 @@
+/// Reference: //Reference: https://www.youtube.com/watch?v=LfHkAUzup5E
+/// This file is similar to the transaction file it displays a list of upcoming bills and categories
+/// Users will be able to view their total budget and their upcoming bills
+
 package com.example.budgettrackerapp.widget
 
 import android.net.Uri
@@ -310,3 +314,5 @@ fun formatDate(dateString: String): String {
         dateString
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
