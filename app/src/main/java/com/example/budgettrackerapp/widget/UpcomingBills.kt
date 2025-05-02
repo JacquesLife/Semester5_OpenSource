@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
+import com.example.budgettrackerapp.data.User
 import com.example.budgettrackerapp.ui.theme.DarkBlue
 import java.text.SimpleDateFormat
 import java.util.*
@@ -104,7 +105,8 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
                         height = Dimension.fillToConstraints
                     },
                 navController = navController,
-                expenses = expenses
+                expenses = expenses,
+                userId = userId
             )
         }
     }
@@ -148,7 +150,7 @@ fun BillCardRowItem(modifier: Modifier, title: String, amount: String, image: In
 }
 
 @Composable
-fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses: List<Expense>) {
+fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses: List<Expense>, userId: Int) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Upcoming Bills", "Transactions")
 
@@ -168,7 +170,7 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
                         .background(if (selectedTab == index) Color.White else Color.Transparent, RoundedCornerShape(20.dp))
                         .clickable {
                             selectedTab = index
-                            if (index == 1) navController.navigate("transaction")
+                            if (index == 1) navController.navigate("transaction/$userId")
                         },
                     contentAlignment = Alignment.Center
                 ) {

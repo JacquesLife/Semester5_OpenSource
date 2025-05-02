@@ -41,12 +41,12 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         _expenses.value = repository.loadExpenses(userId)
     }
 
-    fun getTotalForCategory(category: String, userId: Int, callback: (Double) -> Unit) {
-        viewModelScope.launch {
-            val total = repository.getTotalForCategory(category, userId)
-            callback(total)
-        }
-    }
+//    fun getTotalForCategory(category: String, userId: Int, callback: (Double) -> Unit) {
+//        viewModelScope.launch {
+//            val total = repository.getTotalForCategory(category, userId)
+//            callback(total)
+//        }
+//    }
 
     fun saveBudgetSettings(settings: BudgetSettings) = viewModelScope.launch {
         repository.saveBudgetSettings(settings)

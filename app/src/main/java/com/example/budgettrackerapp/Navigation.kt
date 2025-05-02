@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,9 +40,14 @@ fun AppNavigation(viewModel: BudgetViewModel) {
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != null && currentRoute != "splash" && !currentRoute.startsWith("add_expense")) {
+            if (currentRoute != null &&
+                currentRoute != "splash" &&
+                currentRoute != "login" &&
+                !currentRoute.startsWith("add_expense")
+            ) {
                 BottomNavBar(navController = navController, userId = loggedInUser?.userId ?: 0)
             }
+
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
@@ -75,7 +81,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                 }
                 composable("profile/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
-                    val loggedInUser = viewModel.loginResult.value
+                    val loggedInUser by viewModel.loginResult.collectAsState()
                     val username = loggedInUser?.username ?: "User"
 
                     ProfileScreen(
