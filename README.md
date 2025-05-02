@@ -139,9 +139,22 @@ For contributions or issues, please reach out to us or fork this repo and enhanc
 
 ## Reference List:
 
-- https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
+- https://www.youtube.com/watch?v=LfHkAUzup5E
+
 - https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
-- https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
-- https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
+
+- https://www.youtube.com/watch?v=Q0gRqbtFLcw
+
+- https://www.youtube.com/watch?v=-Kj9T1sa6zk
+  
+- https://www.svgrepo.com/collection/responsive-flat-icons/
+
+- https://developer.android.com/develop/ui/compose/text/user-input
+
+- https://www.youtube.com/watch?v=-Kj9T1sa6zk 
+
+- https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
+
+- https://www.youtube.com/watch?v=mq8lekRbF4I&list=PL0pXjGnY7POS_IS8gGkwZfxKRMiJ2DSEO&index=2
 
 
