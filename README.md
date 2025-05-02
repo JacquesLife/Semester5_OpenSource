@@ -84,7 +84,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ### 🏆 Rewards
 
-- Shows goals, rewards earned, or badges
+- Shows the users current rank based on their points earned through saving money.
 - Motivates users to stay within their budget.
 
 ---
