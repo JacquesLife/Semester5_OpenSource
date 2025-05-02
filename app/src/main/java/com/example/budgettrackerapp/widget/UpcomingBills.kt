@@ -1,5 +1,6 @@
 package com.example.budgettrackerapp.widget
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
@@ -227,7 +230,8 @@ fun UpcomingBillItems(expenses: List<Expense>) {
                                 amount = "R%.2f".format(item.amount),
                                 icon = getCategoryIcon(item.category),
                                 date = formatDate(item.date),
-                                color = Color.Gray
+                                color = Color.Gray,
+                                photoUri = item.photoUri // Pass the photo URI
                             )
                         }
                     }
@@ -239,10 +243,27 @@ fun UpcomingBillItems(expenses: List<Expense>) {
 
 
 @Composable
-fun BillItem(title: String, amount: String, icon: Int, date: String, color: Color) {
+fun BillItem(title: String, amount: String, icon: Int, date: String, color: Color, photoUri: String? = null) {
     Box(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(painter = painterResource(id = icon), contentDescription = null, modifier = Modifier.size(50.dp))
+            // Show category icon if no photo, otherwise show the photo
+            if (photoUri == null) {
+                Image(
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(50.dp)
+                )
+            } else {
+                // Display the receipt image
+                Image(
+                    painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
+                    contentDescription = "Receipt",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
             Spacer(Modifier.size(8.dp))
             Column {
                 ExpenseTextView(title, fontSize = 16.sp, fontWeight = FontWeight.Medium)

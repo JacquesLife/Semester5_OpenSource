@@ -305,14 +305,15 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             onClick = {
                 val expense = Expense(
                     amount = amount.toDoubleOrNull() ?: 0.0,
-                    date = date,
+                    date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                        dateFormatter.parse(date) ?: Calendar.getInstance().time
+                    ),
                     startTime = "",
                     endTime = "",
-                    description = "",
+                    description = "Expense on $date",
                     category = selectedCategory,
-                    photoUri = null,
+                    photoUri = selectedImageUri?.toString(), // Store the URI as a string
                     userOwnerId = userId
-                    //photoUri = selectedImageUri?.toString()
                 )
                 viewModel.addExpense(expense)
                 navController?.navigate("transaction/$userId") {
@@ -327,6 +328,8 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         }
     }
 }
+
+
 
 //@Composable
 //@Preview(showBackground = true)
