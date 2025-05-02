@@ -47,6 +47,8 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
     val expenses = viewModel.expenses.collectAsState(emptyList()).value
 
     // Grouping the expenses by category and amount
+    //https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
+    //https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
     val grouped = expenses.groupBy { it.category }
     val categories = grouped.keys.toList()
     val values = grouped.values.map { list -> list.sumOf { it.amount }.toFloat() }

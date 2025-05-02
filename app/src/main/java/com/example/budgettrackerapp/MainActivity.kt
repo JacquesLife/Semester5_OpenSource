@@ -1,9 +1,3 @@
-// References: https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
-// https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
-/// This is the main activity file it handles permissions and the navigation of the app it allows the image
-/// function to work setting the correct permissions
-
-
 package com.example.budgettrackerapp
 
 import android.Manifest
@@ -21,7 +15,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.BudgetTrackerAppTheme
 
-
+// References: https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
+// https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
+//https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
+//https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -85,5 +82,3 @@ fun RequestStoragePermissions() {
         launcher.launch(permissionsToRequest)
     }
 }
-
-//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
