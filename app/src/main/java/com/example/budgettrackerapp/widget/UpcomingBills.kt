@@ -38,7 +38,7 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
 
     LaunchedEffect(Unit) {
         viewModel.loadExpenses(userId)
-        viewModel.loadBudgetSettings()
+        viewModel.loadBudgetSettings(userId)
     }
 
     val expenses by viewModel.expenses.collectAsState(emptyList())

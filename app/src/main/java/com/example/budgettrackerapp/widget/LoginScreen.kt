@@ -70,6 +70,10 @@ fun LoginScreen(
                         User(username = username, password = password)
                     ) { success, message ->
                         errorMessage = message
+                        if (success) {
+                            // If registration successful, automatically log in
+                            viewModel.loginUser(username, password)
+                        }
                     }
                 }
             },

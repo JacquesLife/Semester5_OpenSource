@@ -36,7 +36,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
     LaunchedEffect(Unit) {
         val userId = viewModel.loginResult.value?.userId ?: return@LaunchedEffect
         viewModel.loadExpenses(userId)
-        viewModel.loadBudgetSettings()
+        viewModel.loadBudgetSettings(userId)
     }
 
 

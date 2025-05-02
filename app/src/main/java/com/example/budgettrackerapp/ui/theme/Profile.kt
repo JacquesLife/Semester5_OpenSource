@@ -30,10 +30,11 @@ fun ProfileScreen(
 
     val user = viewModel.loginResult.collectAsState().value
 
+    // Make sure the user is not null before calling loadExpenses
     LaunchedEffect(user) {
         if (user != null) {
-            viewModel.loadBudgetSettings()
-            viewModel.loadExpenses(user.userId)
+            viewModel.loadBudgetSettings(user.userId)
+            viewModel.loadExpenses(user.userId)  // Pass user.userId to loadExpenses
         }
     }
 
@@ -98,3 +99,4 @@ fun ProfileScreen(
         }
     }
 }
+

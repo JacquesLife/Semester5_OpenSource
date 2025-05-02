@@ -3,22 +3,44 @@ package com.example.budgettrackerapp.ui.theme.rewards
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment as UiAlignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgettrackerapp.R
+import com.example.budgettrackerapp.data.BudgetViewModel
 import kotlin.math.min
 
 @Composable
-fun RewardsScreen() {
-    val userPoints = 230 // Dummy points for now
+fun RewardsScreen(viewModel: BudgetViewModel = viewModel()) {
+    val userPoints by remember {
+        viewModel.rewardPoints
+    }.collectAsState()
     val tier = getUserTier(userPoints)
     val (minPoints, maxPoints) = getTierRange(tier)
     val progressFraction = calculateProgress(userPoints, minPoints, maxPoints)
+
+
+    // Get the current user ID if logged in
+    val userId = viewModel.loginResult.collectAsState().value?.userId
+
+    // Call loadExpenses when userId is available
+    LaunchedEffect(userId) {
+        if (userId != null) {
+            println("DEBUG: Loading data for user ID: $userId")
+            viewModel.loadExpenses(userId)
+            viewModel.loadBudgetSettings(userId)
+
+            // Force recalculation of rewards
+            viewModel.calculateSavingsAndRewards(userId)
+        } else {
+            println("DEBUG: User ID is null, cannot load data")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -72,7 +94,7 @@ fun RewardsScreen() {
             Text(
                 text = "You've reached the highest tier!",
                 fontSize = 14.sp,
-                color = Color(0xFF388E3C) // Green tone
+                color = Color(0xFF388E3C)
             )
         }
 
@@ -92,6 +114,8 @@ fun RewardsScreen() {
         TierCard("Platinum", 501, Int.MAX_VALUE, R.drawable.platinum)
     }
 }
+
+
 
 @Composable
 fun TierCard(tierName: String, minPoints: Int, maxPoints: Int, iconRes: Int) {

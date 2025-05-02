@@ -68,6 +68,7 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         Button(
             onClick = {
                 val settings = BudgetSettings(
+                    userId = userId,
                     monthlyBudget = monthlyBudget.toDoubleOrNull() ?: 0.0,
                     monthlyMaxGoal = monthlyMaxGoal.toDoubleOrNull() ?: 0.0,
                     monthlyMinGoal = monthlyMinGoal.toDoubleOrNull() ?: 0.0

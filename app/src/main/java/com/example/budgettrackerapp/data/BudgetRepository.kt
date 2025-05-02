@@ -1,6 +1,4 @@
-
 package com.example.budgettrackerapp.data
-
 
 class BudgetRepository(
     private val userDao: UserDao,
@@ -9,14 +7,14 @@ class BudgetRepository(
 ) {
     suspend fun registerUser(user: User): Boolean {
         return try {
-            userDao.insertUser(user)
+            val rowId = userDao.insertUser(user)
             true
         } catch (e: Exception) {
+            println("Registration error: ${e.message}")
             e.printStackTrace()
             false
         }
     }
-
 
     suspend fun loginUser(username: String): User? {
         return try {
@@ -27,14 +25,13 @@ class BudgetRepository(
         }
     }
 
-
     suspend fun addExpense(expense: Expense) {
         expenseDao.insert(expense)
     }
+
     suspend fun loadExpenses(userId: Int): List<Expense> {
         return expenseDao.getAllExpenses(userId)
     }
-
 
     suspend fun getTotalForCategory(category: String, userId: Int): Double {
         return expenseDao.getTotalForCategory(category, userId)
@@ -44,7 +41,7 @@ class BudgetRepository(
         budgetSettingsDao.insert(settings)
     }
 
-    suspend fun getBudgetSettings(): BudgetSettings? {
-        return budgetSettingsDao.getSettings()
+    suspend fun getBudgetSettings(userId: Int): BudgetSettings? {
+        return budgetSettingsDao.getSettings(userId)
     }
 }
