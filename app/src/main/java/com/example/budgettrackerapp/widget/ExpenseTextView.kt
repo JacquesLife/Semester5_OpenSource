@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import com.example.budgettrackerapp.ui.theme.InterFont
 
+// Custom Text View
 @Composable
 fun ExpenseTextView(
     text: String,
@@ -36,6 +37,7 @@ fun ExpenseTextView(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current
 ) {
+    // Custom Text View
     Text(text,
         modifier,
         color,

@@ -77,7 +77,7 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
             ) {
                 Column {
                     ExpenseTextView("Upcoming Bills", fontSize = 24.sp, color = Color.White)
-                    ExpenseTextView("View your upcoming bills", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    ExpenseTextView("Search your Transactions", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 }
                 Image(
                     painter = painterResource(id = R.drawable.bell),
@@ -183,19 +183,32 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
         }
 
         if (selectedTab == 0) {
-            UpcomingBillItems(expenses)
+            UpcomingBillItems(expenses, navController)
         }
     }
 }
 
 @Composable
-fun UpcomingBillItems(expenses: List<Expense>) {
+fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
     val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
+    var allExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Box(modifier = Modifier.fillMaxWidth()) {
             ExpenseTextView("Upcoming Bills", fontSize = 20.sp)
-            ExpenseTextView("See All", fontSize = 16.sp, modifier = Modifier.align(Alignment.CenterEnd))
+            ExpenseTextView(
+                if (allExpanded) "Collapse All" else "Expand All",
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .clickable {
+                        val grouped = expenses.groupBy { it.category }
+                        grouped.keys.forEach { category ->
+                            expandedCategories[category] = !allExpanded
+                        }
+                        allExpanded = !allExpanded
+                    }
+            )
         }
         Spacer(Modifier.height(8.dp))
 
@@ -231,7 +244,7 @@ fun UpcomingBillItems(expenses: List<Expense>) {
                                 icon = getCategoryIcon(item.category),
                                 date = formatDate(item.date),
                                 color = Color.Gray,
-                                photoUri = item.photoUri // Pass the photo URI
+                                photoUri = item.photoUri
                             )
                         }
                     }
@@ -240,8 +253,6 @@ fun UpcomingBillItems(expenses: List<Expense>) {
         }
     }
 }
-
-
 @Composable
 fun BillItem(title: String, amount: String, icon: Int, date: String, color: Color, photoUri: String? = null) {
     Box(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {

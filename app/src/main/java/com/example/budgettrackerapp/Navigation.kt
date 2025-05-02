@@ -38,6 +38,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
     val loggedInUser = viewModel.loginResult.collectAsState().value
     val currentUsername = loggedInUser?.username ?: "User"
 
+    // Bottom navigation bar
     Scaffold(
         bottomBar = {
             if (currentRoute != null &&
@@ -49,36 +50,44 @@ fun AppNavigation(viewModel: BudgetViewModel) {
             }
 
         }
+        // Main content
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
+
+            // Navigation graph
             NavHost(
                 navController = navController,
                 startDestination = "splash"
             ) {
+                // Navigation routes
                 composable("splash") {
                     SplashScreen(navController)
                 }
+                // Home route with user ID argument
                 composable("home/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
                     HomeScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
+                // Transaction route with user ID argument
                 composable("transaction/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
                     TransactionScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
+                // Upcoming bills route with user ID argument
                 composable("upcoming_bills/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
                     UpcomingBillsScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
-
+                // Stats route with user ID argument
                 composable("stats/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
                     StatsScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
-
+                // Rewards route
                 composable("wallet") {
                     RewardsScreen()
                 }
+                // Profile route with user ID argument
                 composable("profile/{userId}") { backStackEntry ->
                     val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
                     val loggedInUser by viewModel.loginResult.collectAsState()
@@ -90,10 +99,11 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         username = username
                     )
                 }
-
+                // Login route
                 composable("login") {
                     LoginScreen(
                         viewModel = viewModel,
+                        // Callback function to handle successful login
                         onLoginSuccess = { userId ->
                             navController.navigate("home/$userId") {
                                 popUpTo("login") { inclusive = true }
@@ -102,7 +112,9 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         }
                     )
                 }
+                // Add expense route with initial amount and user ID arguments
                 composable(
+                    // Route with arguments
                     route = "add_expense?initialAmount={initialAmount}&userId={userId}",
                     arguments = listOf(
                         navArgument("initialAmount") {
@@ -113,6 +125,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             type = NavType.IntType
                         }
                     )
+                    // Handle back navigation
                 ) { backStackEntry ->
                     val initialAmount = backStackEntry.arguments?.getString("initialAmount") ?: "0.00"
                     val userId = backStackEntry.arguments?.getInt("userId") ?: return@composable

@@ -67,6 +67,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
 
     val scrollState = rememberScrollState()
 
+    // Stats screen content
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -93,6 +94,8 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                     setTransparentCircleRadius(0f)
                 }
             },
+
+            // Updating the pie chart with the new data
             update = { chart: PieChart ->
                 val entries = categories.mapIndexed { i, cat -> PieEntry(values[i], cat) }
                 val dataSet = PieDataSet(entries, "").apply {
@@ -143,8 +146,11 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Displaying the upcoming payments
         Column(modifier = Modifier.fillMaxWidth()) {
             val upcoming = expenses.sortedBy { it.date }
+
+            // If there are no upcoming payments, display a message
             if (upcoming.isEmpty()) {
                 Text(
                     text = "No upcoming payments",
@@ -152,6 +158,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                     modifier = Modifier.padding(vertical = 4.dp),
                     color = themeColors.onBackground
                 )
+                // If there are upcoming payments, display them
             } else {
                 upcoming.forEach { expense ->
                     Row(
@@ -160,6 +167,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
                     ) {
+                        // Displaying the category icon and expense details
                         Image(
                             painter = painterResource(id = getCategoryIcon(expense.category)),
                             contentDescription = expense.category,
@@ -167,11 +175,13 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
+                            // Displaying the category and expense details
                             Text(
                                 text = expense.category,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = themeColors.onBackground
                             )
+                            // Displaying the expense details
                             Text(
                                 text = "${expense.description} - R%.2f - Due: ${formatDate(expense.date)}".format(expense.amount),
                                 style = MaterialTheme.typography.bodyLarge,
@@ -184,4 +194,3 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
         }
     }
 }
-

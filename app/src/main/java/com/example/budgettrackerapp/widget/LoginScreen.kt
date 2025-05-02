@@ -16,16 +16,19 @@ fun LoginScreen(
     viewModel: BudgetViewModel = viewModel(),
     onLoginSuccess: (Int) -> Unit
 ) {
+    // State variables for username and password
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
+    // Login form
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(32.dp),
         verticalArrangement = Arrangement.Center
     ) {
+        // Text fields for username and password
         TextField(
             value = username,
             onValueChange = { username = it },
@@ -33,8 +36,10 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Spacer between fields
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Password field with password transformation
         TextField(
             value = password,
             onValueChange = { password = it },
@@ -45,7 +50,9 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Login and register buttons
         Button(
+            // Handle login button click
             onClick = {
                 if (username.isBlank() || password.isBlank()) {
                     errorMessage = "Username and password cannot be blank"
@@ -62,9 +69,11 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
+            // Handle register button click
             onClick = {
                 if (username.isBlank() || password.isBlank()) {
                     errorMessage = "Username and password cannot be blank"
+                    // Handle empty fields
                 } else {
                     viewModel.registerUser(
                         User(username = username, password = password)
@@ -80,14 +89,14 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Display error message if any
         Text(
             text = errorMessage,
             color = MaterialTheme.colorScheme.error
         )
     }
-
     val loginResult by viewModel.loginResult.collectAsState()
-
+    // Handle successful login
     loginResult?.let { user ->
         onLoginSuccess(user.userId)
     }

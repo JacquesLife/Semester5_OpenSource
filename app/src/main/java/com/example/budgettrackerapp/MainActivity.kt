@@ -20,6 +20,7 @@ import com.example.budgettrackerapp.ui.theme.BudgetTrackerAppTheme
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
+        // Handle permission result
     ) { permissions ->
         val allGranted = permissions.entries.all { it.value }
         if (!allGranted) {
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Request storage permissions
     private fun requestStoragePermissions() {
         val permissionsToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
@@ -54,8 +56,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Optional: You can also add this as a composable function to request permissions from any screen
 @Composable
+// Request storage permissions for may be needed in the future
 fun RequestStoragePermissions() {
     val context = LocalContext.current
 

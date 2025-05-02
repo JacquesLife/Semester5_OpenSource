@@ -47,6 +47,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
     val expenses by viewModel.expenses.collectAsState(initial = emptyList())
     val budgetSettings by viewModel.budgetSettings.collectAsState()
 
+    // Load expenses and budget settings
     LaunchedEffect(Unit) {
         viewModel.loadExpenses(userId)
         viewModel.loadBudgetSettings()
@@ -55,6 +56,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
     val totalBalance = budgetSettings?.monthlyBudget ?: 0.0
     val totalExpenses = expenses.sumOf { it.amount }
 
+    // Screen content
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, card, list, fab) = createRefs()
@@ -68,7 +70,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                     end.linkTo(parent.end)
                 }
             )
-
+            // Name and actions
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,6 +81,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                         end.linkTo(parent.end)
                     }
             ) {
+                // Name and actions
                 Column {
                     ExpenseTextView("Transactions", fontSize = 24.sp, color = Color.White)
                     ExpenseTextView(
@@ -88,6 +91,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                         color = Color.White
                     )
                 }
+                // Bell icon
                 Image(
                     painter = painterResource(id = R.drawable.bell),
                     contentDescription = null,
@@ -95,6 +99,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                 )
             }
 
+            // Card item
             TransactionCardItem(
                 modifier = Modifier.constrainAs(card) {
                     top.linkTo(nameRow.bottom)
@@ -105,6 +110,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                 totalExpensesAmount = totalExpenses
             )
 
+            // Transaction list
             TransactionList(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,6 +132,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
 @Composable
 fun TransactionCardItem(modifier: Modifier, totalBalance: Double, totalExpensesAmount: Double) {
     Column(
+        // Card item
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()

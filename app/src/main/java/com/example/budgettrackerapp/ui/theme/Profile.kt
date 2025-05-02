@@ -30,6 +30,7 @@ fun ProfileScreen(
 
     val user = viewModel.loginResult.collectAsState().value
 
+    // Load data when the user is logged in
     LaunchedEffect(user) {
         if (user != null) {
             viewModel.loadBudgetSettings()
@@ -83,6 +84,16 @@ fun ProfileScreen(
         )
 
         Spacer(modifier = Modifier.height(40.dp))
+
+        // Button for Edit Monthly Budget (Directs to Home Screen)
+        Button(
+            onClick = {
+                navController.navigate("home/${user?.userId}")
+                },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5B8DEF))
+        ) {
+            Text("Edit Monthly Budget", color = Color.White)
+        }
 
         Button(
             onClick = {

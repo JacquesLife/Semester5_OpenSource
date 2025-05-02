@@ -26,6 +26,7 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
     var monthlyMaxGoal by remember { mutableStateOf("") }
     var monthlyMinGoal by remember { mutableStateOf("") }
 
+    // Retrieve the user's information
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,19 +35,20 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Set your budget goals
         Text("Set Your Budget Goals", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Input fields for monthly budget, max goal, and min goal
         OutlinedTextField(
             value = monthlyBudget,
             onValueChange = { monthlyBudget = it },
             label = { Text("Monthly Budget") },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
+        // Input fields for monthly budget, max goal, and min goal
         OutlinedTextField(
             value = monthlyMaxGoal,
             onValueChange = { monthlyMaxGoal = it },
@@ -56,6 +58,7 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Input fields for monthly budget, max goal, and min goal
         OutlinedTextField(
             value = monthlyMinGoal,
             onValueChange = { monthlyMinGoal = it },
@@ -65,6 +68,7 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Submit button to save the goals
         Button(
             onClick = {
                 val settings = BudgetSettings(

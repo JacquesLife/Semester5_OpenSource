@@ -55,6 +55,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
 
+            // Background image
             Image(
                 painter = painterResource(id = R.drawable.toppage),
                 contentDescription = null,
@@ -65,6 +66,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                 }
             )
 
+            // Name row
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -75,6 +77,8 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                         end.linkTo(parent.end)
                     }
             ) {
+
+                // Back arrow
                 Image(
                     painter = painterResource(id = R.drawable.backarrow),
                     contentDescription = "Go Back",
@@ -83,6 +87,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                         .clickable { navController?.popBackStack() }
                 )
 
+                // Add expense text
                 ExpenseTextView(
                     text = "Add Expense",
                     fontSize = 20.sp,
@@ -92,14 +97,14 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                         .padding(16.dp)
                         .align(Alignment.Center)
                 )
-
+                // Dots menu
                 Image(
                     painter = painterResource(id = R.drawable.dotsmenue),
                     contentDescription = "Menu",
                     modifier = Modifier.align(Alignment.CenterEnd)
                 )
             }
-
+            // Expense list
             DataForm(
                 navController = navController,
                 initialAmount = initialAmount,
@@ -147,7 +152,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
     )
-
+    // Category selection
     val categories = listOf(
         "Food" to R.drawable.food,
         "Transportation" to R.drawable.car,
@@ -172,19 +177,23 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        // Expense description
         ExpenseTextView(text = "CATEGORY", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
 
         Box {
+            // Dropdown menu for category selection
             OutlinedButton(
                 onClick = { expanded = true },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             ) {
+                // Display selected category
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val selectedIcon = categories.find { it.first == selectedCategory }?.second
                     if (selectedIcon != null) {
                         Image(
+                            // Display the selected category icon
                             painter = painterResource(id = selectedIcon),
                             contentDescription = selectedCategory,
                             modifier = Modifier.size(24.dp)
@@ -199,6 +208,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             }
 
             DropdownMenu(
+                // Display the dropdown menu
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
@@ -209,6 +219,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                             expanded = false
                         },
                         text = {
+                            // Display each category option
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = iconRes),
@@ -223,9 +234,8 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                 }
             }
         }
-
         Spacer(modifier = Modifier.size(16.dp))
-
+        // Expense amount
         ExpenseTextView(text = "AMOUNT", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
@@ -236,6 +246,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
 
         Spacer(modifier = Modifier.size(16.dp))
 
+        // Expense date
         ExpenseTextView(text = "DATE", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
@@ -250,6 +261,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     )
                 }
             },
+            // Read-only field
             readOnly = true
         )
 
@@ -268,6 +280,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // Add photo icon
                 Icon(
                     imageVector = Icons.Filled.AddAPhoto,
                     contentDescription = "Add Photo",
@@ -289,6 +302,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     .background(Color.LightGray)
             ) {
                 Image(
+                    // Display the selected image
                     painter = rememberAsyncImagePainter(uri),
                     contentDescription = "Selected Image",
                     modifier = Modifier.fillMaxSize(),
@@ -300,14 +314,16 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         Spacer(modifier = Modifier.size(24.dp))
 
         val viewModel: BudgetViewModel = viewModel()
-
+        // Add expense button
         Button(
+            // Handle add expense button click
             onClick = {
                 val expense = Expense(
                     amount = amount.toDoubleOrNull() ?: 0.0,
                     date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
                         dateFormatter.parse(date) ?: Calendar.getInstance().time
                     ),
+                    // Set start and end times to empty strings
                     startTime = "",
                     endTime = "",
                     description = "Expense on $date",
@@ -315,11 +331,13 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     photoUri = selectedImageUri?.toString(), // Store the URI as a string
                     userOwnerId = userId
                 )
+                //Add expense button
                 viewModel.addExpense(expense)
                 navController?.navigate("transaction/$userId") {
                     popUpTo("add_expense") { inclusive = true }
                 }
             },
+            // Button
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .fillMaxWidth()
@@ -328,11 +346,3 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         }
     }
 }
-
-
-
-//@Composable
-//@Preview(showBackground = true)
-//fun AddExpensePreview() {
-//    AddExpense(rememberNavController())
-//}
