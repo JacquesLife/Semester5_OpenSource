@@ -15,6 +15,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.BudgetTrackerAppTheme
 
+// References: https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
+// https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
