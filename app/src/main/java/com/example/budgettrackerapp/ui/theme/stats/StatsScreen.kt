@@ -1,3 +1,7 @@
+/// References: https://www.youtube.com/watch?v=HGsVBqUrnGY
+/// This page will graphically display the user's stats and upcoming payments
+/// it will display them neatly with a pie chart
+
 package com.example.budgettrackerapp.ui.theme.stats
 
 import androidx.compose.foundation.Image

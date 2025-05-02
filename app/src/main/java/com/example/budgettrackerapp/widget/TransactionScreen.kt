@@ -1,3 +1,8 @@
+//Reference: https://www.youtube.com/watch?v=LfHkAUzup5E
+/// This file contains the code for the Transaction Screen which allows the users to
+/// search for their transaction within a given time frame by using  a date picker
+/// The user also has the option to search by name the category of the transactions.
+
 package com.example.budgettrackerapp.widget
 
 import android.net.Uri
@@ -642,4 +647,4 @@ private fun formatDisplayDate(dateString: String): String {
     }
 }
 
-// You don't need to modify getCategoryIcon since it's already defined in your UpcomingBills.kt
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

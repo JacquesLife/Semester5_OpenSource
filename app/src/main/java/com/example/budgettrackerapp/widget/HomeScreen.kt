@@ -1,3 +1,8 @@
+/// Reference: https://developer.android.com/develop/ui/compose/text/user-input
+/// The home screen is quite basic it doesnt handle complicated logic just allows the user to set their budget
+/// with minimum and max goals for monthly budget
+/// However the values it provides are essential for the rest of the app
+
 package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.background
@@ -90,3 +95,5 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

@@ -1,3 +1,8 @@
+/// Reference https://www.youtube.com/watch?v=LfHkAUzup5E
+/// This is the user profile page where the user can view their profile information
+/// such as their username, rank, total budget, remaining budget, and their expenses
+/// They will also be able to logout and edit their monthly budget
+
 package com.example.budgettrackerapp.ui.theme.profile
 
 import androidx.compose.foundation.background
@@ -109,3 +114,5 @@ fun ProfileScreen(
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

@@ -1,3 +1,7 @@
+/// Reference: https://www.youtube.com/watch?v=mq8lekRbF4I&list=PL0pXjGnY7POS_IS8gGkwZfxKRMiJ2DSEO&index=2
+/// In this page the navigation is setup allowing the user to move between pages with composable functions
+/// it also links userid with the navigation
+
 package com.example.budgettrackerapp
 
 import androidx.compose.foundation.layout.Box
@@ -140,3 +144,5 @@ fun AppNavigation(viewModel: BudgetViewModel) {
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
