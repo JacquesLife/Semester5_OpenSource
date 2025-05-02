@@ -1,3 +1,4 @@
+
 package com.example.budgettrackerapp.data
 
 import androidx.room.Dao
@@ -6,10 +7,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface UserDao {
+interface BudgetSettingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: User)
+    suspend fun insert(settings: BudgetSettings)
 
-    @Query("SELECT * FROM users WHERE username = :username ")
-    suspend fun login(username: String): User?
+    @Query("SELECT * FROM budget_settings WHERE id = 1")
+    suspend fun getSettings(): BudgetSettings?
 }

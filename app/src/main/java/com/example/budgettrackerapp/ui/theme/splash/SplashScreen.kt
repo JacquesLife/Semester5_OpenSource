@@ -21,6 +21,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
+    // Simulate a delay for the splash screen
     LaunchedEffect(key1 = true) {
         delay(3000)
         navController.navigate("login") {
@@ -28,12 +29,14 @@ fun SplashScreen(navController: NavController) {
         }
     }
 
+    // Splash screen content
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF0D47A1)),
         contentAlignment = Alignment.Center
     ) {
+        // Background image
         Image(
             painter = painterResource(id = R.drawable.splash),
             contentDescription = "Splash Background",
@@ -41,18 +44,21 @@ fun SplashScreen(navController: NavController) {
         )
 
         Column(
+            // Center the logo and text vertically
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            // Buck svg display
             Image(
                 painter = painterResource(id = R.drawable.buck),
                 contentDescription = "App Logo",
                 modifier = Modifier.size(150.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp)) // Space between logo and text
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
+                // Welcoming text
                 text = "Welcome to Buck Savers",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontFamily = InterFont,

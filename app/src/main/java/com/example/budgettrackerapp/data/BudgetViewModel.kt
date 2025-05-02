@@ -2,58 +2,68 @@ package com.example.budgettrackerapp.data
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.mindrot.jbcrypt.BCrypt
 
 class BudgetViewModel(application: Application) : AndroidViewModel(application) {
 
     private val db = AppDatabase.getDatabase(application)
     private val repository = BudgetRepository(
         db.userDao(),
-        db.categoryDao(),
-        db.expenseDao()
+        db.expenseDao(),
+        db.budgetSettingsDao()
     )
 
-    private val _categories = MutableLiveData<List<Category>>()
-    val categories: LiveData<List<Category>> get() = _categories
+    private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
+    val expenses: StateFlow<List<Expense>> get() = _expenses
 
-    private val _expenses = MutableLiveData<List<Expense>>()
-    val expenses: LiveData<List<Expense>> get() = _expenses
+    private val _loginResult = MutableStateFlow<User?>(null)
+    val loginResult: StateFlow<User?> get() = _loginResult
 
-    private val _loginResult = MutableLiveData<User?>()
-    val loginResult: LiveData<User?> get() = _loginResult
+    private val _budgetSettings = MutableStateFlow<BudgetSettings?>(null)
+    val budgetSettings: StateFlow<BudgetSettings?> get() = _budgetSettings
 
-    fun registerUser(user: User) = viewModelScope.launch {
-        repository.registerUser(user)
+    fun registerUser(user: User, onResult: (Boolean, String) -> Unit) = viewModelScope.launch {
+        val existing = repository.loginUser(user.username)
+        if (existing != null) {
+            onResult(false, "Username already exists. Please log in.")
+        } else {
+            val hashedPassword = BCrypt.hashpw(user.password, BCrypt.gensalt())
+            val secureUser = user.copy(password = hashedPassword)
+            val success = repository.registerUser(secureUser)
+            onResult(success, if (success) "Registration successful." else "Registration failed.")
+        }
     }
 
     fun loginUser(username: String, password: String) = viewModelScope.launch {
-        _loginResult.value = repository.loginUser(username, password)
-    }
-
-    fun loadCategories(username: String) = viewModelScope.launch {
-        _categories.value = repository.getCategoriesForUser(username)
-    }
-
-    fun addCategory(category: Category) = viewModelScope.launch {
-        repository.addCategory(category)
-        loadCategories(category.username)
+        val user = repository.loginUser(username)
+        if (user != null && BCrypt.checkpw(password, user.password)) {
+            _loginResult.value = user
+        } else {
+            _loginResult.value = null
+        }
     }
 
     fun addExpense(expense: Expense) = viewModelScope.launch {
         repository.addExpense(expense)
     }
 
-    fun loadExpenses(start: String, end: String) = viewModelScope.launch {
-        _expenses.value = repository.getExpensesBetweenDates(start, end)
+    fun loadExpenses(userId: Int) = viewModelScope.launch {
+        _expenses.value = repository.loadExpenses(userId)
     }
 
-    fun getTotalForCategory(catId: Int, start: String, end: String, callback: (Double) -> Unit) {
-        viewModelScope.launch {
-            val total = repository.getTotalForCategory(catId, start, end)
-            callback(total)
-        }
+    fun saveBudgetSettings(settings: BudgetSettings) = viewModelScope.launch {
+        repository.saveBudgetSettings(settings)
+    }
+
+    fun loadBudgetSettings() = viewModelScope.launch {
+        _budgetSettings.value = repository.getBudgetSettings()
+    }
+
+    fun logout() {
+        _loginResult.value = null
     }
 }

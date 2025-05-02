@@ -23,15 +23,17 @@ data class BottomNavItem(
 )
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavController, userId: Int) {
 
+    // List of bottom navigation items
     val items = listOf(
-        BottomNavItem("Home", R.drawable.home, "home"),
-        BottomNavItem("stats", R.drawable.chart, "stats"),
+        BottomNavItem("Home", R.drawable.home, "upcoming_bills/$userId"),
+        BottomNavItem("stats", R.drawable.chart, "stats/$userId"),
         BottomNavItem("Wallet", R.drawable.wallet, "wallet"),
-        BottomNavItem("profile", R.drawable.user, "profile")
+        BottomNavItem("profile", R.drawable.user, "profile/$userId")
     )
 
+    // Bottom navigation bar
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth()
@@ -40,15 +42,18 @@ fun BottomNavBar(navController: NavController) {
             containerColor = Color.White,
             tonalElevation = 0.dp
         ) {
+
+            // Get the current route to highlight the selected item
             val navBackStackEntry = navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry.value?.destination?.route
 
+            // Loop through the items and create a NavigationBarItem for each
             items.forEachIndexed { index, item ->
                 if (index == 2) {
-                    // Create space for the FAB in the middle
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Space for FAB
                 }
 
+                // Create a NavigationBarItem for each item
                 NavigationBarItem(
                     icon = {
                         Icon(
@@ -57,9 +62,11 @@ fun BottomNavBar(navController: NavController) {
                             tint = if (currentRoute == item.route) Color(0xFF5B8DEF) else Color.Gray
                         )
                     },
-                    label = null, // Remove labels to match the design
+                    // Set the label to null to hide it
+                    label = null,
                     selected = currentRoute == item.route,
                     onClick = {
+                        // Navigate to the corresponding screen
                         if (currentRoute != item.route) {
                             navController.navigate(item.route) {
                                 popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -70,24 +77,23 @@ fun BottomNavBar(navController: NavController) {
                     },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color(0xFF5B8DEF),
-                        indicatorColor = Color.White, // Remove indicator background
+                        indicatorColor = Color.White,
                         unselectedIconColor = Color.Gray
                     )
                 )
 
+                // Add a spacer for the FAB
                 if (index == 1) {
-                    // Create space for the FAB in the middle
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f)) // Space for FAB
                 }
             }
         }
 
-        // Floating Action Button in the center - Navigate to AddExpense screen
+        // Floating Action Button (FAB)
         FloatingActionButton(
             onClick = {
-                // Navigate to the AddExpense screen
-                navController.navigate("add_expense") {
-                    // Optional: You can add navigation options here if needed
+                // Navigate to the add expense screen
+                navController.navigate("add_expense?initialAmount=0.00&userId=$userId") {
                     launchSingleTop = true
                 }
             },
@@ -98,6 +104,7 @@ fun BottomNavBar(navController: NavController) {
                 .size(56.dp)
                 .shadow(8.dp, CircleShape)
         ) {
+            // Icon for the FAB
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Add Expense",

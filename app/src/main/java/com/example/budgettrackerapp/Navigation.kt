@@ -6,117 +6,137 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
+import com.example.budgettrackerapp.ui.theme.profile.ProfileScreen
+import com.example.budgettrackerapp.ui.theme.rewards.RewardsScreen
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
-import androidx.navigation.NavController
-import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.ui.theme.stats.StatsScreen
 import com.example.budgettrackerapp.widget.HomeScreen
 import com.example.budgettrackerapp.widget.LoginScreen
 import com.example.budgettrackerapp.widget.TransactionScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
-
-
+import com.example.budgettrackerapp.widget.UpcomingBillsScreen
 
 @Composable
 fun AppNavigation(viewModel: BudgetViewModel) {
     val navController = rememberNavController()
-
-    // Get current route to determine when to show bottom bar
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
+    // Get the current username (null-safe)
+    val loggedInUser = viewModel.loginResult.collectAsState().value
+    val currentUsername = loggedInUser?.username ?: "User"
+
+    // Bottom navigation bar
     Scaffold(
         bottomBar = {
-            // Only show the bottom bar on main screens (home, stats, wallet, profile)
-            // Don't show it on splash or add_expense screens
-            if (currentRoute != null && currentRoute != "splash" && !currentRoute.startsWith("add_expense")) {
-                BottomNavBar(navController = navController)
+            if (currentRoute != null &&
+                currentRoute != "splash" &&
+                currentRoute != "login" &&
+                !currentRoute.startsWith("add_expense")
+            ) {
+                BottomNavBar(navController = navController, userId = loggedInUser?.userId ?: 0)
             }
+
         }
+        // Main content
     ) { innerPadding ->
-        // Apply the padding to the NavHost content
         Box(modifier = Modifier.padding(innerPadding)) {
+
+            // Navigation graph
             NavHost(
                 navController = navController,
                 startDestination = "splash"
             ) {
+                // Navigation routes
                 composable("splash") {
                     SplashScreen(navController)
                 }
-                composable("home") {
-                    HomeScreen(viewModel = viewModel, navController = navController)
+                // Home route with user ID argument
+                composable("home/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
+                    HomeScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
-                composable("transaction") {
-                    TransactionScreen(navController)
+                // Transaction route with user ID argument
+                composable("transaction/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
+                    TransactionScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
-
-                composable("stats") {
-                    StatsScreen(navController)
+                // Upcoming bills route with user ID argument
+                composable("upcoming_bills/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
+                    UpcomingBillsScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
+                // Stats route with user ID argument
+                composable("stats/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
+                    StatsScreen(navController = navController, viewModel = viewModel, userId = userId)
+                }
+                // Rewards route
                 composable("wallet") {
-                    WalletScreen(navController)
+                    RewardsScreen()
                 }
-                composable("profile") {
-                    ProfileScreen(navController)
+                // Profile route with user ID argument
+                composable("profile/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: return@composable
+                    val loggedInUser by viewModel.loginResult.collectAsState()
+                    val username = loggedInUser?.username ?: "User"
+
+                    ProfileScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        username = username
+                    )
                 }
+                // Login route
                 composable("login") {
-                    val vm: BudgetViewModel = viewModel()
                     LoginScreen(
-                        viewModel      = vm,
-                        onLoginSuccess = {
-                            navController.navigate("home") {
+                        viewModel = viewModel,
+                        // Callback function to handle successful login
+                        onLoginSuccess = { userId ->
+                            navController.navigate("home/$userId") {
                                 popUpTo("login") { inclusive = true }
                                 launchSingleTop = true
                             }
                         }
                     )
                 }
+                // Add expense route with initial amount and user ID arguments
                 composable(
-                    route = "add_expense?initialAmount={initialAmount}",
+                    // Route with arguments
+                    route = "add_expense?initialAmount={initialAmount}&userId={userId}",
                     arguments = listOf(
                         navArgument("initialAmount") {
                             type = NavType.StringType
                             defaultValue = "0.00"
-                            nullable = true
+                        },
+                        navArgument("userId") {
+                            type = NavType.IntType
                         }
                     )
+                    // Handle back navigation
                 ) { backStackEntry ->
                     val initialAmount = backStackEntry.arguments?.getString("initialAmount") ?: "0.00"
-                    AddExpense(navController = navController)
+                    val userId = backStackEntry.arguments?.getInt("userId") ?: return@composable
+                    AddExpense(
+                        navController = navController,
+                        initialAmount = initialAmount,
+                        userId = userId
+                    )
                 }
+
             }
         }
     }
 }
-
-// Placeholder screens - replace with your actual implementations or create them
-@Composable
-fun StatsScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Stats Screen")
-    }
-}
-
-@Composable
-fun WalletScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Wallet Screen")
-    }
-}
-
-@Composable
-fun ProfileScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Profile Screen")
-    }
-}
-
-

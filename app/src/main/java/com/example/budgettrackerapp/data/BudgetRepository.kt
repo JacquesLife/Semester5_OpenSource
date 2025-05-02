@@ -1,42 +1,50 @@
+
 package com.example.budgettrackerapp.data
+
 
 class BudgetRepository(
     private val userDao: UserDao,
-    private val categoryDao: CategoryDao,
-    private val expenseDao: ExpenseDao
+    private val expenseDao: ExpenseDao,
+    private val budgetSettingsDao: BudgetSettingsDao
 ) {
-
-    // ----------------- USERS -----------------
-
-    suspend fun registerUser(user: User) {
-        userDao.insertUser(user)
+    suspend fun registerUser(user: User): Boolean {
+        return try {
+            userDao.insertUser(user)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
-    suspend fun loginUser(username: String, password: String): User? {
-        return userDao.login(username, password)
+
+    suspend fun loginUser(username: String): User? {
+        return try {
+            userDao.login(username)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
-    // ----------------- CATEGORIES -----------------
-
-    suspend fun addCategory(category: Category) {
-        categoryDao.insert(category)
-    }
-
-    suspend fun getCategoriesForUser(username: String): List<Category> {
-        return categoryDao.getAll(username)
-    }
-
-    // ----------------- EXPENSES -----------------
 
     suspend fun addExpense(expense: Expense) {
         expenseDao.insert(expense)
     }
-
-    suspend fun getExpensesBetweenDates(start: String, end: String): List<Expense> {
-        return expenseDao.getBetweenDates(start, end)
+    suspend fun loadExpenses(userId: Int): List<Expense> {
+        return expenseDao.getAllExpenses(userId)
     }
 
-    suspend fun getTotalForCategory(catId: Int, start: String, end: String): Double {
-        return expenseDao.getTotalForCategory(catId, start, end)
+
+    suspend fun getTotalForCategory(category: String, userId: Int): Double {
+        return expenseDao.getTotalForCategory(category, userId)
+    }
+
+    suspend fun saveBudgetSettings(settings: BudgetSettings) {
+        budgetSettingsDao.insert(settings)
+    }
+
+    suspend fun getBudgetSettings(): BudgetSettings? {
+        return budgetSettingsDao.getSettings()
     }
 }
