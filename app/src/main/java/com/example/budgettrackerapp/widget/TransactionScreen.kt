@@ -366,6 +366,7 @@ fun TransactionList(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Date range picker
             OutlinedButton(
                 onClick = {
                     selectingStartDate = true
@@ -384,6 +385,7 @@ fun TransactionList(
 
             Spacer(modifier = Modifier.width(8.dp))
 
+            // Date range picker
             OutlinedButton(
                 onClick = {
                     selectingStartDate = false
@@ -392,6 +394,7 @@ fun TransactionList(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(8.dp)
             ) {
+                // Date range picker
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "End Date"
