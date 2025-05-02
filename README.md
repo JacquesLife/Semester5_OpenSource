@@ -5,6 +5,18 @@ Welcome to the **BuckSavers**, a Kotlin-based Android application designed to he
 
 ---
 
+## Group
+
+- Jacques du Plessis ST10329686
+- Ethan Smyth ST10255309
+- Caleb Voskuil ST10397320
+- Ethan Donaldson ST10318621
+
+## Links 
+
+- Github: https://github.com/JacquesLife/Semester5_OpenSource
+- Walkthrough Video: https://www.youtube.com/watch?v=mXjAB-rR950
+
 ## 🎯 App Purpose
 
 This app allows users to:
