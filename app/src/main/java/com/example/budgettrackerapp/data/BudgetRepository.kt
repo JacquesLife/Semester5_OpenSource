@@ -7,13 +7,26 @@ class BudgetRepository(
     private val expenseDao: ExpenseDao,
     private val budgetSettingsDao: BudgetSettingsDao
 ) {
-    suspend fun registerUser(user: User) {
-        userDao.insertUser(user)
+    suspend fun registerUser(user: User): Boolean {
+        return try {
+            userDao.insertUser(user)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
     }
 
-    suspend fun loginUser(username: String, password: String): User? {
-        return userDao.login(username, password)
+
+    suspend fun loginUser(username: String): User? {
+        return try {
+            userDao.login(username)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
+
 
     suspend fun addExpense(expense: Expense) {
         expenseDao.insert(expense)

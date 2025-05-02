@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.mindrot.jbcrypt.BCrypt
 
 class BudgetViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -25,12 +26,25 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     private val _budgetSettings = MutableStateFlow<BudgetSettings?>(null)
     val budgetSettings: StateFlow<BudgetSettings?> get() = _budgetSettings
 
-    fun registerUser(user: User) = viewModelScope.launch {
-        repository.registerUser(user)
+    fun registerUser(user: User, onResult: (Boolean, String) -> Unit) = viewModelScope.launch {
+        val existing = repository.loginUser(user.username)
+        if (existing != null) {
+            onResult(false, "Username already exists. Please log in.")
+        } else {
+            val hashedPassword = BCrypt.hashpw(user.password, BCrypt.gensalt())
+            val secureUser = user.copy(password = hashedPassword)
+            val success = repository.registerUser(secureUser)
+            onResult(success, if (success) "Registration successful." else "Registration failed.")
+        }
     }
 
     fun loginUser(username: String, password: String) = viewModelScope.launch {
-        _loginResult.value = repository.loginUser(username, password)
+        val user = repository.loginUser(username)
+        if (user != null && BCrypt.checkpw(password, user.password)) {
+            _loginResult.value = user
+        } else {
+            _loginResult.value = null
+        }
     }
 
     fun addExpense(expense: Expense) = viewModelScope.launch {
@@ -40,13 +54,6 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     fun loadExpenses(userId: Int) = viewModelScope.launch {
         _expenses.value = repository.loadExpenses(userId)
     }
-
-//    fun getTotalForCategory(category: String, userId: Int, callback: (Double) -> Unit) {
-//        viewModelScope.launch {
-//            val total = repository.getTotalForCategory(category, userId)
-//            callback(total)
-//        }
-//    }
 
     fun saveBudgetSettings(settings: BudgetSettings) = viewModelScope.launch {
         repository.saveBudgetSettings(settings)

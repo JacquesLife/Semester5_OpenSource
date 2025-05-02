@@ -67,12 +67,10 @@ fun LoginScreen(
                     errorMessage = "Username and password cannot be blank"
                 } else {
                     viewModel.registerUser(
-                        User(
-                            username = username,
-                            password = password
-                        )
-                    )
-                    errorMessage = "Registered successfully. Now log in!"
+                        User(username = username, password = password)
+                    ) { success, message ->
+                        errorMessage = message
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -94,3 +92,4 @@ fun LoginScreen(
         onLoginSuccess(user.userId)
     }
 }
+

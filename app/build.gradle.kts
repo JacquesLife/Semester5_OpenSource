@@ -57,6 +57,7 @@ dependencies {
     implementation ("androidx.compose.foundation:foundation:1.8.0" )
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation(libs.androidx.navigation.compose)
+    implementation("org.mindrot:jbcrypt:0.4")
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.adapters)
     implementation(libs.firebase.firestore.ktx)
