@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "749798729972",
+    "firebase_url": "https://prog7311db-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "prog7311db",
+    "storage_bucket": "prog7311db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749798729972:android:89e80b39226c7507b056a1",
+        "android_client_info": {
+          "package_name": "com.example.budgettrackerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtjIq5LWf30tnqIQ6RocLH7HIbT3CYiAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
