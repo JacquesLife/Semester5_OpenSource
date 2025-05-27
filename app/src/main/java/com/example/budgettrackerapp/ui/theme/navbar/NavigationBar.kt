@@ -27,7 +27,7 @@ data class BottomNavItem(
 )
 
 @Composable
-fun BottomNavBar(navController: NavController, userId: Int) {
+fun BottomNavBar(navController: NavController, userId: String) {
 
     // List of bottom navigation items
     val items = listOf(

@@ -19,7 +19,7 @@ import com.example.budgettrackerapp.data.User
 @Composable
 fun LoginScreen(
     viewModel: BudgetViewModel = viewModel(),
-    onLoginSuccess: (Int) -> Unit
+    onLoginSuccess: (String) -> Unit
 ) {
     // State variables for username and password
     var username by remember { mutableStateOf("") }
