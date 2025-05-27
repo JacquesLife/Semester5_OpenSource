@@ -34,15 +34,13 @@ import com.example.budgettrackerapp.widget.getCategoryIcon
 import com.example.budgettrackerapp.widget.formatDate
 
 @Composable
-fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId: Int)
+fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId: String)
 {
     // Load data from the databases
     LaunchedEffect(Unit) {
-        val userId = viewModel.loginResult.value?.userId ?: return@LaunchedEffect
         viewModel.loadExpenses(userId)
         viewModel.loadBudgetSettings()
     }
-
 
     val expenses = viewModel.expenses.collectAsState(emptyList()).value
 

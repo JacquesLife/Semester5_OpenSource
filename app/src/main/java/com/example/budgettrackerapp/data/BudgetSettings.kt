@@ -1,13 +1,13 @@
-
 package com.example.budgettrackerapp.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-//Budget settings table
-@Entity(tableName = "budget_settings")
+// Budget settings data class for Firebase Realtime Database
 data class BudgetSettings(
-    @PrimaryKey val id: Int = 1,
-    val monthlyBudget: Double,
-    val monthlyMaxGoal: Double,
-    val monthlyMinGoal: Double
-)
+    val id: String = "",               // Firebase-generated ID or user-specific ID
+    val userId: String = "",           // User ID who owns these settings
+    val monthlyBudget: Double = 0.0,   // Monthly budget amount
+    val monthlyMaxGoal: Double = 0.0,  // Monthly maximum goal
+    val monthlyMinGoal: Double = 0.0   // Monthly minimum goal
+) {
+    // No-argument constructor required by Firebase
+    constructor() : this("", "", 0.0, 0.0, 0.0)
+}

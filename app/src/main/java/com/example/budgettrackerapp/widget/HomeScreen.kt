@@ -24,7 +24,7 @@ import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.User
 
 @Composable
-fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController, userId: Int) {
+fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController, userId: String) {
     val context = LocalContext.current
 
     var monthlyBudget by remember { mutableStateOf("") }
@@ -77,6 +77,7 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         Button(
             onClick = {
                 val settings = BudgetSettings(
+                    userId = userId,
                     monthlyBudget = monthlyBudget.toDoubleOrNull() ?: 0.0,
                     monthlyMaxGoal = monthlyMaxGoal.toDoubleOrNull() ?: 0.0,
                     monthlyMinGoal = monthlyMinGoal.toDoubleOrNull() ?: 0.0

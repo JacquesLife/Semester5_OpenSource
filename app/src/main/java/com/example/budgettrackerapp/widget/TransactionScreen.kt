@@ -48,7 +48,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, userId: Int) {
+fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, userId: String) {
     val expenses by viewModel.expenses.collectAsState(initial = emptyList())
     val budgetSettings by viewModel.budgetSettings.collectAsState()
 
@@ -177,7 +177,7 @@ fun TransactionList(
     modifier: Modifier,
     navController: NavController,
     expenses: List<Expense>,
-    userId: Int
+    userId: String
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Transactions", "Upcoming Bills")
