@@ -87,9 +87,14 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
                     StatsScreen(navController = navController, viewModel = viewModel, userId = userId)
                 }
-                // Rewards route
-                composable("wallet") {
-                    RewardsScreen()
+                // Rewards route with user ID argument - FIXED
+                composable("wallet/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    RewardsScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        userId = userId
+                    )
                 }
                 // Profile route with user ID argument
                 composable("profile/{userId}") { backStackEntry ->
@@ -144,5 +149,3 @@ fun AppNavigation(viewModel: BudgetViewModel) {
         }
     }
 }
-
-//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

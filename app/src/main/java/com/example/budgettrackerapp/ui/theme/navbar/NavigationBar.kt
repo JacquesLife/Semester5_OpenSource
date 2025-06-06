@@ -33,7 +33,7 @@ fun BottomNavBar(navController: NavController, userId: String) {
     val items = listOf(
         BottomNavItem("Home", R.drawable.home, "upcoming_bills/$userId"),
         BottomNavItem("stats", R.drawable.chart, "stats/$userId"),
-        BottomNavItem("Wallet", R.drawable.wallet, "wallet"),
+        BottomNavItem("Wallet", R.drawable.wallet, "wallet/$userId"),
         BottomNavItem("profile", R.drawable.user, "profile/$userId")
     )
 
