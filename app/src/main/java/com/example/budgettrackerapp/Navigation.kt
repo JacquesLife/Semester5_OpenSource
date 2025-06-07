@@ -36,6 +36,7 @@ import com.example.budgettrackerapp.widget.LoginScreen
 import com.example.budgettrackerapp.widget.TransactionScreen
 import com.example.budgettrackerapp.widget.UpcomingBillsScreen
 import kotlinx.coroutines.launch
+import com.example.budgettrackerapp.ui.theme.settings.SettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -236,13 +237,11 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             )
                         ) { backStackEntry ->
                             val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            // Create your SettingsScreen composable
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("Settings Screen - User ID: $userId")
-                            }
+                            SettingsScreen(
+                                navController = navController,
+                                viewModel = viewModel,
+                                userId = userId
+                            )
                         }
 
                         // Help screen (no user ID required)
@@ -410,13 +409,11 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         )
                     ) { backStackEntry ->
                         val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                        // Create your SettingsScreen composable
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Settings Screen - User ID: $userId")
-                        }
+                        SettingsScreen(
+                            navController = navController,
+                            viewModel = viewModel,
+                            userId = userId
+                        )
                     }
 
                     // Help screen (no user ID required)
