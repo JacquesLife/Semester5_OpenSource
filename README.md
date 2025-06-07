@@ -17,7 +17,7 @@ Welcome to the **BuckSavers**, a Kotlin-based Android application designed to he
 - Github: https://github.com/JacquesLife/Semester5_OpenSource
 - Walkthrough Video: https://www.youtube.com/watch?v=mXjAB-rR950
 
-## 🎯 App Purpose
+##  App Purpose
 
 This app allows users to:
 
@@ -29,11 +29,11 @@ This app allows users to:
 
 ---
 
-## 🧭 Navigation Walkthrough
+##  Navigation Walkthrough
 
 The app uses a bottom navigation bar (except on login/register screens) to switch between core features. Here's how to navigate:
 
-### 🏁 Getting Started
+###  Getting Started
 
 1. **Splash Screen**
    - Automatically redirects to login after a brief display
@@ -43,15 +43,15 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
    - If already registered, user is logged in
    - If not, registration logic checks for duplicates and hashes password
 
-> 🔐 Bottom nav is hidden here to prevent bypassing security
+>  Bottom nav is hidden here to prevent bypassing security
 
 ---
 
-### 🏠 Home 
+###  Home 
 
 - Displays current balance, recent transactions, and quick navigation to add expenses or review stats
 
-### 💳 Transactions 
+### Transactions 
 
 - Shows all past transactions
 - Grouped and filterable by category/date
@@ -59,7 +59,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-### 📅 Upcoming Bills 
+###  Upcoming Bills 
 
 - Lists all bills due in the next 30 days
 - Click to expand each category for detailed entries
@@ -67,7 +67,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-### ➕ Add Expense 
+###  Add Expense 
 
 - Allows manual entry of a transaction
 - Supports:
@@ -79,7 +79,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-### 📈 Stats 
+###  Stats 
 
 - Breakdown of total spending per category
 - Displays pie chart or bar graphs
@@ -87,21 +87,21 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-### 👤 Profile 
+###  Profile 
 
 - View current username and rank
 - Personal settings screen (rank may be based on spending habits or goals)
 
 ---
 
-### 🏆 Rewards
+###  Rewards
 
 - Shows the users current rank based on their points earned through saving money.
 - Motivates users to stay within their budget.
 
 ---
 
-## ⚙️ Technical Highlights
+##  Technical Highlights
 
 - **Room Database** with DAOs for `User`, `Expense`, `Category`, `BudgetSettings`
 - **MVVM architecture** for clean separation of logic
@@ -111,7 +111,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 1. Clone or extract the project.
 2. Add this dependency to your `build.gradle.kts`:
@@ -123,7 +123,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-## 🛠 Developer Tips
+##  Developer Tips
 
 - All navigation routes include `userId` for user-specific views.
 - `fallbackToDestructiveMigration()` is enabled — safe for prototyping.
@@ -131,7 +131,7 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
-## 📬 Contact
+##  Contact
 
 For contributions or issues, please reach out to us or fork this repo and enhance it further.
 
