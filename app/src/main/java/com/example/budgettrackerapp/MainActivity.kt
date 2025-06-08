@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.ExpenseNotificationManager
 import com.example.budgettrackerapp.ui.theme.BudgetTrackerAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +27,16 @@ class MainActivity : ComponentActivity() {
     ) { permissions ->
         val allGranted = permissions.entries.all { it.value }
         if (!allGranted) {
-            Toast.makeText(this, "Storage permissions are required to upload photos", Toast.LENGTH_LONG).show()
+            val deniedPermissions = permissions.filterValues { !it }.keys
+            if (deniedPermissions.any { it.contains("MEDIA") || it.contains("STORAGE") }) {
+                Toast.makeText(this, "Storage permissions are required to upload photos", Toast.LENGTH_LONG).show()
+            }
+            if (deniedPermissions.contains(Manifest.permission.POST_NOTIFICATIONS)) {
+                Toast.makeText(this, "Notification permission is required for expense reminders", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            // Initialize notification system when permissions are granted
+            initializeNotificationSystem()
         }
     }
 
@@ -34,7 +44,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Request permissions on startup
-        requestStoragePermissions()
+        requestPermissions()
 
         setContent {
             BudgetTrackerAppTheme {
@@ -44,17 +54,34 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        
+        // Try to initialize notification system even if some permissions were denied
+        // The notification system will handle missing permissions gracefully
+        initializeNotificationSystem()
     }
 
-    // Request storage permissions
-    private fun requestStoragePermissions() {
-        val permissionsToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+    private fun initializeNotificationSystem() {
+        val notificationManager = ExpenseNotificationManager(this)
+        notificationManager.scheduleNotificationChecks()
+    }
+
+    // Request storage and notification permissions
+    private fun requestPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+        
+        // Storage permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
         } else {
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+        
+        // Notification permissions (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
         }
 
-        requestPermissionLauncher.launch(permissionsToRequest)
+        requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
     }
 }
 

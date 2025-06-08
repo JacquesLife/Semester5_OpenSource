@@ -20,12 +20,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -134,6 +136,14 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
     var date by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    
+    // New notification-related fields
+    var dueDate by remember { mutableStateOf("") }
+    var isRecurring by remember { mutableStateOf(false) }
+    var recurringInterval by remember { mutableStateOf("monthly") }
+    var recurringExpanded by remember { mutableStateOf(false) }
+    var notificationEnabled by remember { mutableStateOf(true) }
+    var notificationDaysBefore by remember { mutableStateOf(3f) }
 
     // Image picker launcher
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -152,6 +162,18 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         { _, year, month, dayOfMonth ->
             calendar.set(year, month, dayOfMonth)
             date = dateFormatter.format(calendar.time)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+    
+    // Due date picker dialog
+    val dueDatePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            calendar.set(year, month, dayOfMonth)
+            dueDate = dateFormatter.format(calendar.time)
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -272,6 +294,115 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
 
         Spacer(modifier = Modifier.size(16.dp))
 
+        // Due Date Section
+        ExpenseTextView(text = "DUE DATE (Optional)", fontSize = 14.sp, color = Color.Gray)
+        Spacer(modifier = Modifier.size(4.dp))
+        OutlinedTextField(
+            value = dueDate,
+            onValueChange = { dueDate = it },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Select due date for bills") },
+            trailingIcon = {
+                IconButton(onClick = { dueDatePickerDialog.show() }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select Due Date"
+                    )
+                }
+            },
+            readOnly = true
+        )
+
+        Spacer(modifier = Modifier.size(16.dp))
+
+        // Recurring Expense Checkbox
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = isRecurring,
+                onCheckedChange = { isRecurring = it }
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            ExpenseTextView(text = "This is a recurring expense", fontSize = 14.sp)
+        }
+
+        // Recurring Interval (only show if recurring is enabled)
+        if (isRecurring) {
+            Spacer(modifier = Modifier.size(8.dp))
+            ExpenseTextView(text = "RECURRING INTERVAL", fontSize = 14.sp, color = Color.Gray)
+            Spacer(modifier = Modifier.size(4.dp))
+            
+            Box {
+                OutlinedButton(
+                    onClick = { recurringExpanded = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = recurringInterval.replaceFirstChar { it.uppercase() },
+                        color = Color.Black
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = recurringExpanded,
+                    onDismissRequest = { recurringExpanded = false }
+                ) {
+                    listOf("weekly", "monthly", "yearly").forEach { interval ->
+                        DropdownMenuItem(
+                            onClick = {
+                                recurringInterval = interval
+                                recurringExpanded = false
+                            },
+                            text = {
+                                Text(interval.replaceFirstChar { it.uppercase() })
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.size(16.dp))
+
+        // Notification Settings (only show if due date is set)
+        if (dueDate.isNotEmpty()) {
+            ExpenseTextView(text = "NOTIFICATION SETTINGS", fontSize = 14.sp, color = Color.Gray)
+            Spacer(modifier = Modifier.size(8.dp))
+            
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Checkbox(
+                    checked = notificationEnabled,
+                    onCheckedChange = { notificationEnabled = it }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                ExpenseTextView(text = "Enable notifications", fontSize = 14.sp)
+            }
+
+            if (notificationEnabled) {
+                Spacer(modifier = Modifier.size(8.dp))
+                ExpenseTextView(
+                    text = "Notify ${notificationDaysBefore.toInt()} days before due date",
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+                Slider(
+                    value = notificationDaysBefore,
+                    onValueChange = { notificationDaysBefore = it },
+                    valueRange = 1f..14f,
+                    steps = 12,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            
+            Spacer(modifier = Modifier.size(16.dp))
+        }
+
         ExpenseTextView(text = "PHOTO", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
 
@@ -328,16 +459,30 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
                         dateFormatter.parse(date) ?: Calendar.getInstance().time
                     ),
-                    // Set start and end times to empty strings
+                    dueDate = if (dueDate.isNotEmpty()) {
+                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+                            dateFormatter.parse(dueDate) ?: Calendar.getInstance().time
+                        )
+                    } else "",
+                    isRecurring = isRecurring,
+                    recurringInterval = if (isRecurring) recurringInterval else "",
                     startTime = "",
                     endTime = "",
                     description = "Expense on $date",
                     category = selectedCategory,
-                    photoUri = selectedImageUri?.toString(), // Store the URI as a string
-                    userOwnerId = userId
+                    photoUri = selectedImageUri?.toString(),
+                    userOwnerId = userId,
+                    notificationEnabled = notificationEnabled && dueDate.isNotEmpty(),
+                    notificationDaysBefore = notificationDaysBefore.toInt()
                 )
                 //Add expense button
-                viewModel.addExpense(expense)
+                viewModel.addExpense(expense) { success, expenseId ->
+                    if (success && expense.notificationEnabled && expense.dueDate.isNotEmpty()) {
+                        // Trigger immediate notification check for new expense
+                        val notificationManager = com.example.budgettrackerapp.data.ExpenseNotificationManager(context)
+                        notificationManager.scheduleImmediateCheck()
+                    }
+                }
                 navController?.navigate("transaction/$userId") {
                     popUpTo("add_expense") { inclusive = true }
                 }
