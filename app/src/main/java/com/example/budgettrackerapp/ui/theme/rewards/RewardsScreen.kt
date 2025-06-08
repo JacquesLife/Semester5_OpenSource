@@ -1,28 +1,64 @@
 /// References: https://medium.com/@rowaido.game/mastering-layout-basics-in-jetpack-compose-8f85853855e3
-/// This is out non-functional rewards screen for part 3 we are working on it
+/// This is our functional rewards screen that calculates user points based on spending goals
 /// it will display the users rank depending on how well they have achieved their monthly goals
 /// Tiers include bronze, silver, gold, and platinum
-
 
 package com.example.budgettrackerapp.ui.theme.rewards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment as UiAlignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
+import com.example.budgettrackerapp.data.BudgetViewModel
 import kotlin.math.min
-
+import kotlin.math.max
 
 @Composable
-fun RewardsScreen() {
-    val userPoints = 230 // Dummy value for user points (replace with real user data later)
+fun RewardsScreen(
+    navController: NavController,
+    viewModel: BudgetViewModel,
+    userId: String
+) {
+    val budgetSettings by viewModel.budgetSettings.collectAsState()
+    val expenses by viewModel.expenses.collectAsState()
+    val user by viewModel.loginResult.collectAsState()
+
+    // Load data when the user is logged in
+    LaunchedEffect(user) {
+        // Solution 1: Use local variable to avoid smart cast issue
+        val currentUser = user
+        if (currentUser != null) {
+            viewModel.loadBudgetSettings(currentUser.userId)
+            viewModel.loadExpenses(currentUser.userId)
+        }
+    }
+
+    // Alternative Solution 2: Use user?.let { } block
+    // LaunchedEffect(user) {
+    //     user?.let { currentUser ->
+    //         viewModel.loadBudgetSettings(currentUser.userId)
+    //         viewModel.loadExpenses(currentUser.userId)
+    //     }
+    // }
+
+    // Calculate total spent this month
+    val totalSpent = expenses.sumOf { it.amount }
+
+    // Get budget settings
+    val minGoal = budgetSettings?.monthlyMinGoal ?: 0.0
+    val maxGoal = budgetSettings?.monthlyMaxGoal ?: 0.0
+    val monthlyBudget = budgetSettings?.monthlyBudget ?: 0.0
+
+    // Calculate user points based on spending vs goals
+    val userPoints = calculateUserPoints(totalSpent, minGoal, maxGoal, monthlyBudget)
 
     // Get the user's current tier (e.g., Bronze, Silver, etc.) based on points
     val tier = getUserTier(userPoints)
@@ -50,6 +86,38 @@ fun RewardsScreen() {
 
         Spacer(modifier = Modifier.height(24.dp)) // Vertical spacing
 
+        // Display spending summary
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            elevation = CardDefaults.cardElevation(4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = UiAlignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "This Month's Spending",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Total Spent: R %.2f".format(totalSpent),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black
+                )
+                Text(
+                    text = "Min Goal: R %.2f | Max Goal: R %.2f".format(minGoal, maxGoal),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         // Display current user points
         Text(
             text = "Current Points: $userPoints",
@@ -63,7 +131,7 @@ fun RewardsScreen() {
         Text(
             text = "Tier: $tier",
             style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray
+            color = getTierColor(tier)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -75,7 +143,7 @@ fun RewardsScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(12.dp),
-                color = MaterialTheme.colorScheme.primary,
+                color = getTierColor(tier),
                 trackColor = Color.LightGray
             )
 
@@ -96,7 +164,48 @@ fun RewardsScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Points explanation
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            elevation = CardDefaults.cardElevation(2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "How Points Work:",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "• Spend less than minimum goal: 0 points",
+                    fontSize = 12.sp,
+                    color = Color.DarkGray
+                )
+                Text(
+                    text = "• Spend more than maximum goal: 0 points",
+                    fontSize = 12.sp,
+                    color = Color.DarkGray
+                )
+                Text(
+                    text = "• Closer to minimum goal = more points",
+                    fontSize = 12.sp,
+                    color = Color.DarkGray
+                )
+                Text(
+                    text = "• Maximum 100 points per month",
+                    fontSize = 12.sp,
+                    color = Color.DarkGray
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Sub-header for tier list
         Text(
@@ -108,22 +217,25 @@ fun RewardsScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Show cards for each reward tier with icon and point range
-        //https://medium.com/@acceldia/jetpack-compose-creating-expandable-cards-with-content-9ea1eae09efe
-        TierCard("Bronze", 0, 100, R.drawable.bronze)
-        TierCard("Silver", 101, 250, R.drawable.silver)
-        TierCard("Gold", 251, 500, R.drawable.gold)
-        TierCard("Platinum", 501, Int.MAX_VALUE, R.drawable.platinum)
+        TierCard("Bronze", 0, 100, R.drawable.bronze, userPoints)
+        TierCard("Silver", 101, 250, R.drawable.silver, userPoints)
+        TierCard("Gold", 251, 500, R.drawable.gold, userPoints)
+        TierCard("Platinum", 501, Int.MAX_VALUE, R.drawable.platinum, userPoints)
     }
 }
 
 // A reusable composable that displays a tier card with name, icon, and point range
 @Composable
-fun TierCard(tierName: String, minPoints: Int, maxPoints: Int, iconRes: Int) {
+fun TierCard(tierName: String, minPoints: Int, maxPoints: Int, iconRes: Int, currentPoints: Int) {
+    val isCurrentTier = currentPoints >= minPoints && (maxPoints == Int.MAX_VALUE || currentPoints <= maxPoints)
+    val cardColor = if (isCurrentTier) getTierColor(tierName).copy(alpha = 0.1f) else Color.Transparent
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(if (isCurrentTier) 6.dp else 2.dp),
+        colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
         Row(
             modifier = Modifier
@@ -142,7 +254,24 @@ fun TierCard(tierName: String, minPoints: Int, maxPoints: Int, iconRes: Int) {
 
             // Tier name and point range text
             Column {
-                Text(text = tierName, style = MaterialTheme.typography.titleMedium)
+                Row(
+                    verticalAlignment = UiAlignment.CenterVertically
+                ) {
+                    Text(
+                        text = tierName,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (isCurrentTier) getTierColor(tierName) else Color.Black
+                    )
+                    if (isCurrentTier) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "CURRENT",
+                            fontSize = 10.sp,
+                            color = getTierColor(tierName),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
                 Text(
                     text = "Points: $minPoints - ${if (maxPoints == Int.MAX_VALUE) "∞" else maxPoints}",
                     fontSize = 14.sp,
@@ -151,6 +280,25 @@ fun TierCard(tierName: String, minPoints: Int, maxPoints: Int, iconRes: Int) {
             }
         }
     }
+}
+
+// Calculates user points based on spending vs goals
+fun calculateUserPoints(totalSpent: Double, minGoal: Double, maxGoal: Double, monthlyBudget: Double): Int {
+    // If no goals are set, return 0 points
+    if (minGoal <= 0 || maxGoal <= 0) return 0
+
+    // If spending is outside the acceptable range, return 0 points
+    if (totalSpent < minGoal || totalSpent > maxGoal) return 0
+
+    // Calculate points based on how close to minimum goal (closer = more points)
+    // Maximum 100 points for spending exactly at minimum goal
+    val range = maxGoal - minGoal
+    if (range <= 0) return 0
+
+    val distanceFromMin = totalSpent - minGoal
+    val pointsRatio = 1.0 - (distanceFromMin / range)
+
+    return (pointsRatio * 100).toInt().coerceIn(0, 100)
 }
 
 // Determines the user's tier based on their points
@@ -179,4 +327,13 @@ fun calculateProgress(points: Int, minPoints: Int, maxPoints: Int): Float {
     else min((points - minPoints).toFloat() / (maxPoints - minPoints), 1f)
 }
 
-//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
+// Returns the color associated with each tier
+fun getTierColor(tier: String): Color {
+    return when (tier) {
+        "Bronze" -> Color(0xFFCD7F32)
+        "Silver" -> Color(0xFFC0C0C0)
+        "Gold" -> Color(0xFFFFD700)
+        "Platinum" -> Color(0xFFE5E4E2)
+        else -> Color.Gray
+    }
+}

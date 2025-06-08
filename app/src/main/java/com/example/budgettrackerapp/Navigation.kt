@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,169 +56,65 @@ fun AppNavigation(viewModel: BudgetViewModel) {
         "login"
     )
 
-    // Check if current route should show bottom navigation
-    val shouldShowBottomNav = currentRoute?.let { route ->
-        !routesWithoutBottomNav.contains(route) &&
-                !route.startsWith("add_expense") &&
-                currentUserId != null // Only show bottom nav when user is logged in
-    } ?: false
-
-    // Only show drawer when user is logged in and not on splash/login screens
-    if (shouldShowBottomNav && currentUserId != null) {
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            gesturesEnabled = true,
-            drawerContent = {
-                MenuDrawer(
-                    navController = navController,
-                    viewModel = viewModel,
-                    onCloseDrawer = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                    }
-                )
+    // Bottom navigation bar
+    Scaffold(
+        bottomBar = {
+            if (currentRoute != null &&
+                currentRoute != "splash" &&
+                currentRoute != "login" &&
+                !currentRoute.startsWith("add_expense")
+            ) {
+                BottomNavBar(navController = navController, userId = loggedInUser?.userId ?: "")
             }
-        ) {
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { },
-                        actions = {
-                            IconButton(
-                                onClick = {
-                                    scope.launch {
-                                        if (drawerState.isClosed) {
-                                            drawerState.open()
-                                        } else {
-                                            drawerState.close()
-                                        }
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "Menu"
-                                )
-                            }
-                        }
-                    )
-                },
-                bottomBar = {
-                    BottomNavBar(
+
+        }
+        // Main content
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+
+            // Navigation graph
+            NavHost(
+                navController = navController,
+                startDestination = "splash"
+            ) {
+                // Navigation routes
+                composable("splash") {
+                    SplashScreen(navController)
+                }
+                // Home route with user ID argument
+                composable("home/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    HomeScreen(navController = navController, viewModel = viewModel, userId = userId)
+                }
+                // Transaction route with user ID argument
+                composable("transaction/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    TransactionScreen(navController = navController, viewModel = viewModel, userId = userId)
+                }
+                // Upcoming bills route with user ID argument
+                composable("upcoming_bills/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    UpcomingBillsScreen(navController = navController, viewModel = viewModel, userId = userId)
+                }
+                // Stats route with user ID argument
+                composable("stats/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    StatsScreen(navController = navController, viewModel = viewModel, userId = userId)
+                }
+                // Rewards route with user ID argument - FIXED
+                composable("wallet/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    RewardsScreen(
                         navController = navController,
-                        userId = currentUserId.toString()
+                        viewModel = viewModel,
+                        userId = userId
                     )
                 }
-            ) { innerPadding ->
-                Box(modifier = Modifier.padding(innerPadding)) {
-                    NavHost(
-                        navController = navController,
-                        startDestination = "splash"
-                    ) {
-                        // Splash screen
-                        composable("splash") {
-                            SplashScreen(navController)
-                        }
-
-                        // Login screen
-                        composable("login") {
-                            LoginScreen(
-                                viewModel = viewModel,
-                                onLoginSuccess = { userId ->
-                                    navController.navigate("home/$userId") {
-                                        popUpTo("login") { inclusive = true }
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
-                        }
-
-                        // Home screen with user ID
-                        composable(
-                            route = "home/{userId}",
-                            arguments = listOf(
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            HomeScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                userId = userId
-                            )
-                        }
-
-                        // Transaction screen with user ID
-                        composable(
-                            route = "transaction/{userId}",
-                            arguments = listOf(
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            TransactionScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                userId = userId
-                            )
-                        }
-
-                        // Upcoming bills screen (acts as home/dashboard)
-                        composable(
-                            route = "upcoming_bills/{userId}",
-                            arguments = listOf(
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            UpcomingBillsScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                userId = userId
-                            )
-                        }
-
-                        // Statistics screen with user ID
-                        composable(
-                            route = "stats/{userId}",
-                            arguments = listOf(
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            StatsScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                userId = userId
-                            )
-                        }
-
-                        // Wallet/Rewards screen
-                        composable("wallet") {
-                            RewardsScreen()
-                        }
-
-                        // Profile screen with user ID
-                        composable(
-                            route = "profile/{userId}",
-                            arguments = listOf(
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            val loggedInUser by viewModel.loginResult.collectAsState()
-                            val username = loggedInUser?.username ?: "User"
+                // Profile route with user ID argument
+                composable("profile/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                    val loggedInUser by viewModel.loginResult.collectAsState()
+                    val username = loggedInUser?.username ?: "User"
 
                             ProfileScreen(
                                 navController = navController,
@@ -448,6 +345,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         )
                     }
                 }
+
             }
         }
     }
