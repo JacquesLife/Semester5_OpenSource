@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.ColorScheme
 
@@ -22,9 +21,9 @@ object ThemeManager {
     @Composable
     fun getCurrentTheme(): ColorScheme {
         return if (isDarkMode.value) {
-            darkColorScheme()
+            DarkColorScheme
         } else {
-            lightColorScheme()
+            LightColorScheme
         }
     }
 

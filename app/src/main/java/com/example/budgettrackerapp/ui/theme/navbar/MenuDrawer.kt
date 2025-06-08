@@ -94,7 +94,7 @@ fun MenuDrawer(
         modifier = Modifier
             .fillMaxHeight()
             .width(280.dp)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         // Drawer header with user info
@@ -116,7 +116,7 @@ fun MenuDrawer(
             // Logout item at the bottom
             item {
                 Spacer(modifier = Modifier.height(32.dp))
-                HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f))
                 Spacer(modifier = Modifier.height(16.dp))
 
                 LogoutItem(
@@ -143,12 +143,12 @@ fun DrawerHeader(username: String) {
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF5B8DEF)),
+                .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = username.take(1).uppercase(),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -160,13 +160,13 @@ fun DrawerHeader(username: String) {
             Text(
                 text = "Welcome back!",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
             Text(
                 text = username,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -185,11 +185,8 @@ fun DrawerItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                // Navigate and handle proper back stack management
                 navController.navigate(route) {
-                    // Avoid multiple instances of the same destination
                     launchSingleTop = true
-                    // Restore state when re-selecting a tab
                     restoreState = true
                 }
                 onCloseDrawer()
@@ -203,7 +200,7 @@ fun DrawerItem(
                 Icon(
                     imageVector = item.icon,
                     contentDescription = item.title,
-                    tint = Color(0xFF5B8DEF),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -211,7 +208,7 @@ fun DrawerItem(
                 Icon(
                     painter = painterResource(id = item.iconResId),
                     contentDescription = item.title,
-                    tint = Color(0xFF5B8DEF),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -223,7 +220,7 @@ fun DrawerItem(
         Text(
             text = item.title,
             fontSize = 16.sp,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )
     }
@@ -240,10 +237,8 @@ fun LogoutItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                // Clear user data and navigate to login
                 viewModel.logout()
                 navController.navigate("login") {
-                    // Clear the entire back stack
                     popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
@@ -255,7 +250,7 @@ fun LogoutItem(
         Icon(
             imageVector = Icons.Filled.ExitToApp,
             contentDescription = "Logout",
-            tint = Color.Red,
+            tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(24.dp)
         )
 
@@ -264,7 +259,7 @@ fun LogoutItem(
         Text(
             text = "Logout",
             fontSize = 16.sp,
-            color = Color.Red,
+            color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(1f)
         )
     }

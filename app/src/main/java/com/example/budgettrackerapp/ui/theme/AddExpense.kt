@@ -20,12 +20,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -82,7 +85,6 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                         end.linkTo(parent.end)
                     }
             ) {
-
                 // Back arrow
                 Image(
                     painter = painterResource(id = R.drawable.backarrow),
@@ -97,7 +99,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                     text = "Add Expense",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.Center)
@@ -177,13 +179,13 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             .padding(16.dp)
             .fillMaxWidth()
             .shadow(16.dp)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .clip(RoundedCornerShape(16.dp))
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         // Expense description
-        ExpenseTextView(text = "CATEGORY", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "CATEGORY", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
         Spacer(modifier = Modifier.size(4.dp))
 
         Box {
@@ -207,7 +209,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     }
                     Text(
                         text = selectedCategory,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -241,38 +243,52 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
         }
         Spacer(modifier = Modifier.size(16.dp))
         // Expense amount
-        ExpenseTextView(text = "AMOUNT", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "AMOUNT", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
         Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Enter amount", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
         )
 
         Spacer(modifier = Modifier.size(16.dp))
 
         // Expense date
-        ExpenseTextView(text = "DATE", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "DATE", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
         Spacer(modifier = Modifier.size(4.dp))
-        OutlinedTextField(
-            value = date,
-            onValueChange = { date = it },
+        OutlinedButton(
+            onClick = { datePickerDialog.show() },
             modifier = Modifier.fillMaxWidth(),
-            trailingIcon = {
-                IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "Select Date"
-                    )
-                }
-            },
-            // Read-only field
-            readOnly = true
-        )
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.DateRange,
+                    contentDescription = "Select Date",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (date.isEmpty()) "Select date" else date,
+                    color = if (date.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.size(16.dp))
 
-        ExpenseTextView(text = "PHOTO", fontSize = 14.sp, color = Color.Gray)
+        ExpenseTextView(text = "PHOTO", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
         Spacer(modifier = Modifier.size(4.dp))
 
         // Photo selection button
@@ -289,7 +305,8 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                 Icon(
                     imageVector = Icons.Filled.AddAPhoto,
                     contentDescription = "Add Photo",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = if (selectedImageUri == null) "Add Receipt Image" else "Change Image")
@@ -304,7 +321,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                     .height(200.dp)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.LightGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Image(
                     // Display the selected image
@@ -345,9 +362,10 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
             // Button
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("Add Expense", color = Color.White)
+            Text("Add Expense", color = MaterialTheme.colorScheme.onPrimary)
         }
     }
 }

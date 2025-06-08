@@ -62,9 +62,13 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
     val totalExpenses = expenses.sumOf { it.amount }
 
     // Screen content
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (imageRef, nameRow, card, list, fab) = createRefs()
+            val (imageRef, nameRow, card, list) = createRefs()
 
             Image(
                 painter = painterResource(id = R.drawable.toppage),
@@ -75,7 +79,7 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                     end.linkTo(parent.end)
                 }
             )
-            // Name and actions
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,17 +90,10 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                         end.linkTo(parent.end)
                     }
             ) {
-                // Name and actions
                 Column {
-                    ExpenseTextView("Transactions", fontSize = 24.sp, color = Color.White)
-                    ExpenseTextView(
-                        "View your transaction history",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    ExpenseTextView("Transactions", fontSize = 24.sp, color = MaterialTheme.colorScheme.onPrimary)
+                    ExpenseTextView("Search your Transactions", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                 }
-                // Bell icon
                 Image(
                     painter = painterResource(id = R.drawable.bell),
                     contentDescription = null,
@@ -104,7 +101,6 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                 )
             }
 
-            // Card item
             TransactionCardItem(
                 modifier = Modifier.constrainAs(card) {
                     top.linkTo(nameRow.bottom)
@@ -115,7 +111,6 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                 totalExpensesAmount = totalExpenses
             )
 
-            // Transaction list
             TransactionList(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,26 +125,25 @@ fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, 
                 expenses = expenses,
                 userId = userId
             )
-
         }
     }
 }
+
 @Composable
 fun TransactionCardItem(modifier: Modifier, totalBalance: Double, totalExpensesAmount: Double) {
     Column(
-        // Card item
         modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(DarkBlue)
+            .background(MaterialTheme.colorScheme.primary)
             .padding(16.dp)
     ) {
         Box(Modifier.fillMaxWidth().weight(1f)) {
             Column(Modifier.align(Alignment.CenterStart)) {
-                ExpenseTextView("Total Balance", fontSize = 16.sp, color = Color.White)
-                ExpenseTextView("R%.2f".format(totalBalance), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                ExpenseTextView("Total Balance", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
+                ExpenseTextView("R%.2f".format(totalBalance), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
             }
             Image(painter = painterResource(id = R.drawable.dotsmenue), contentDescription = null, modifier = Modifier.align(Alignment.CenterEnd))
         }
@@ -166,19 +160,14 @@ fun TransactionCardRowItem(modifier: Modifier, title: String, amount: String, im
         Row {
             Image(painter = painterResource(id = image), contentDescription = null)
             Spacer(Modifier.size(8.dp))
-            ExpenseTextView(title, fontSize = 16.sp, color = Color.White)
+            ExpenseTextView(title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
         }
-        ExpenseTextView(amount, fontSize = 20.sp, color = Color.White)
+        ExpenseTextView(amount, fontSize = 20.sp, color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
 @Composable
-fun TransactionList(
-    modifier: Modifier,
-    navController: NavController,
-    expenses: List<Expense>,
-    userId: String
-) {
+fun TransactionList(modifier: Modifier, navController: NavController, expenses: List<Expense>, userId: String) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Transactions", "Upcoming Bills")
 
@@ -196,10 +185,6 @@ fun TransactionList(
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
-
-    // Inside your TransactionList composable, modify the filteredExpenses code block:
-
-    // Inside your TransactionList composable, modify the filteredExpenses code block:
 
     val filteredExpenses = expenses.filter { expense ->
         val matchesSearch = if (searchQuery.isBlank()) {
@@ -300,10 +285,7 @@ fun TransactionList(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .background(
-                    color = Color(0xFFF5F5F5),
-                    shape = RoundedCornerShape(24.dp)
-                )
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
                 .padding(4.dp)
         ) {
             tabs.forEachIndexed { index, title ->
@@ -312,8 +294,8 @@ fun TransactionList(
                         .weight(1f)
                         .height(40.dp)
                         .background(
-                            color = if (selectedTab == index) Color.White else Color.Transparent,
-                            shape = RoundedCornerShape(20.dp)
+                            if (selectedTab == index) MaterialTheme.colorScheme.surface else Color.Transparent,
+                            RoundedCornerShape(20.dp)
                         )
                         .clickable {
                             selectedTab = index
@@ -326,7 +308,7 @@ fun TransactionList(
                     ExpenseTextView(
                         text = title,
                         fontSize = 16.sp,
-                        color = if (selectedTab == index) Color.Black else Color.Gray
+                        color = if (selectedTab == index) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }
@@ -340,11 +322,12 @@ fun TransactionList(
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
                 .focusRequester(focusRequester),
-            placeholder = { Text("Search transactions") },
+            placeholder = { Text("Search transactions", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             },
             trailingIcon = {
@@ -352,7 +335,8 @@ fun TransactionList(
                     IconButton(onClick = { searchQuery = "" }) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Clear search"
+                            contentDescription = "Clear search",
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -360,7 +344,13 @@ fun TransactionList(
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
         )
 
         // Date filter
@@ -382,10 +372,11 @@ fun TransactionList(
             ) {
                 Icon(
                     imageVector = Icons.Default.DateRange,
-                    contentDescription = "Start Date"
+                    contentDescription = "Start Date",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(if (startDate.isEmpty()) "Start Date" else formatDisplayDate(startDate))
+                Text(if (startDate.isEmpty()) "Start Date" else formatDisplayDate(startDate), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -402,10 +393,11 @@ fun TransactionList(
                 // Date range picker
                 Icon(
                     imageVector = Icons.Default.DateRange,
-                    contentDescription = "End Date"
+                    contentDescription = "End Date",
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(if (endDate.isEmpty()) "End Date" else formatDisplayDate(endDate))
+                Text(if (endDate.isEmpty()) "End Date" else formatDisplayDate(endDate), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -420,7 +412,7 @@ fun TransactionList(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Clear dates",
-                    tint = if (startDate.isNotEmpty() || endDate.isNotEmpty()) Color.Red else Color.Gray
+                    tint = if (startDate.isNotEmpty() || endDate.isNotEmpty()) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
         }
@@ -458,7 +450,8 @@ fun TransactionList(
             Box(modifier = Modifier.fillMaxWidth()) {
                 ExpenseTextView(
                     text = if (filteredExpenses.isEmpty()) "No Transactions Found" else "Transactions (${filteredExpenses.size})",
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Row(
@@ -470,7 +463,7 @@ fun TransactionList(
                         ExpenseTextView(
                             text = if (anyExpanded) "Collapse All" else "Expand All",
                             fontSize = 14.sp,
-                            color = DarkBlue,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.clickable {
                                 val newState = !anyExpanded
                                 groupedExpenses.keys.forEach { expandedCategories[it] = newState }
@@ -491,9 +484,9 @@ fun TransactionList(
                     contentAlignment = Alignment.Center
                 ) {
                     if (searchQuery.isNotEmpty() || startDate.isNotEmpty() || endDate.isNotEmpty()) {
-                        ExpenseTextView("No transactions match your search", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        ExpenseTextView("No transactions match your search", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.error)
                     } else {
-                        ExpenseTextView("No transactions found", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        ExpenseTextView("No transactions found", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.error)
                     }
                 }
             } else {
@@ -512,7 +505,7 @@ fun TransactionList(
                             amount = "R%.2f".format(total),
                             icon = getCategoryIcon(category),
                             date = "${items.size} transaction${if (items.size > 1) "s" else ""}",
-                            color = Color.Red
+                            color = MaterialTheme.colorScheme.error
                         )
 
                         if (expanded) {
@@ -527,7 +520,7 @@ fun TransactionList(
                     }
 
                     Divider(
-                        color = Color.LightGray,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                         thickness = 1.dp,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -561,8 +554,8 @@ fun TransactionItem(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1f)) {
-            ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            ExpenseTextView(text = date, fontSize = 12.sp, color = Color.Gray)
+            ExpenseTextView(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
+            ExpenseTextView(text = date, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
         }
         ExpenseTextView(
             text = amount,
@@ -584,7 +577,7 @@ fun TransactionDetailItem(
             .padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF8F8F8)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -617,12 +610,13 @@ fun TransactionDetailItem(
                 ExpenseTextView(
                     text = if (expense.description.isNotBlank()) expense.description else expense.category,
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 ExpenseTextView(
                     text = formatDisplayDate(expense.date),
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
 
@@ -630,7 +624,7 @@ fun TransactionDetailItem(
                 text = "R%.2f".format(expense.amount),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Red
+                color = MaterialTheme.colorScheme.error
             )
         }
     }

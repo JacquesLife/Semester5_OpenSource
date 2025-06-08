@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgettrackerapp.data.BudgetViewModel
-import com.example.budgettrackerapp.ui.theme.AppTheme
+import com.example.budgettrackerapp.ui.theme.BudgetTrackerAppTheme
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
         requestStoragePermissions()
 
         setContent {
-            AppTheme {
+            BudgetTrackerAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
