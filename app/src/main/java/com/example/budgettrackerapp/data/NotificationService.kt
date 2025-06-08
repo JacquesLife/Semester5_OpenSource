@@ -52,7 +52,7 @@ class NotificationService(private val context: Context) {
             else -> "Expense Due in $daysUntilDue Days"
         }
         
-        val message = "${expense.description} (${expense.category}) - $${expense.amount} is due ${
+        val message = "${expense.description} (${expense.category}) - R${expense.amount} is due ${
             when {
                 daysUntilDue == 0 -> "today"
                 daysUntilDue == 1 -> "tomorrow"

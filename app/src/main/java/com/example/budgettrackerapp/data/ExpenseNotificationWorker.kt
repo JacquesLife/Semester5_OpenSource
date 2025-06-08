@@ -52,8 +52,7 @@ class ExpenseNotificationWorker(
     }
     
     private suspend fun getCurrentUser(): User? {
-        // For now, we'll get the current user from shared preferences
-        // You should replace this with your actual authentication system
+
         val sharedPrefs = applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val userId = sharedPrefs.getString("current_user_id", null)
         val username = sharedPrefs.getString("current_username", null)
