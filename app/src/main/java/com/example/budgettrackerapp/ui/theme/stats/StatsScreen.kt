@@ -24,19 +24,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.compose.ui.graphics.toArgb
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.example.budgettrackerapp.data.BudgetViewModel
-import com.example.budgettrackerapp.data.Expense
-import com.example.budgettrackerapp.data.User
 import com.example.budgettrackerapp.widget.getCategoryIcon
 import com.example.budgettrackerapp.widget.formatDate
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -60,6 +57,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
         (startDate == null || !expenseDate.isBefore(startDate)) &&
                 (endDate == null || !expenseDate.isAfter(endDate))
     }
+
     // Grouping the expenses by category and amount
     //https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
     //https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
@@ -99,7 +97,6 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
             style = MaterialTheme.typography.headlineSmall,
             color = themeColors.primary
         )
-
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -204,8 +201,6 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
         Spacer(modifier = Modifier.height(20.dp))
 
         // Listing future Payments
-        Spacer(modifier = Modifier.height(20.dp))
-
         Text(
             text = "Payments",
             style = MaterialTheme.typography.titleLarge,
@@ -249,7 +244,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = themeColors.onBackground
                             )
-                            // Displaying the expense details
+                            // Displaying the expense details with proper string formatting
                             Text(
                                 text = "${expense.description} - R%.2f - Due: ${formatDate(expense.date)}".format(expense.amount),
                                 style = MaterialTheme.typography.bodyLarge,
@@ -277,8 +272,8 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
     }
 }
 
-///Methods to filter expenses based on date
-///https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
+/// Methods to filter expenses based on date
+/// https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ShowDatePicker(onDateSelected: (LocalDate) -> Unit) {

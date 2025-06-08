@@ -24,7 +24,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
-import com.example.budgettrackerapp.ui.theme.ErrorScreen
 import com.example.budgettrackerapp.ui.theme.UserIdErrorScreen
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.navbar.MenuDrawer
@@ -228,12 +227,13 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             return@composable
                         }
                         StatsScreen(
+                            navController = navController,
                             viewModel = viewModel,
                             userId = userId
                         )
                     }
 
-                    // Wallet/Rewards screen with user ID - FIXED
+                    // Wallet/Rewards screen with user ID
                     composable(
                         route = "wallet/{userId}",
                         arguments = listOf(

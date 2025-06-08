@@ -30,6 +30,7 @@ adapters = "3.2.0-alpha11"
 firebaseFirestoreKtx = "25.1.4"
 ui = "1.8.2"
 workRuntimeKtx = "2.10.1"
+coreI18n = "1.0.0"
 
 [libraries]
 androidx-activity-compose-v170 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
@@ -79,6 +80,7 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 androidx-adapters = { group = "androidx.databinding", name = "adapters", version.ref = "adapters" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
+androidx-core-i18n = { group = "androidx.core", name = "core-i18n", version.ref = "coreI18n" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
