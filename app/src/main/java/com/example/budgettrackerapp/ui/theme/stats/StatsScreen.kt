@@ -1,45 +1,65 @@
 /// References: https://www.youtube.com/watch?v=HGsVBqUrnGY
+/// References: https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
 /// This page will graphically display the user's stats and upcoming payments
 /// it will display them neatly with a pie chart
 
 package com.example.budgettrackerapp.ui.theme.stats
 
+import android.app.DatePickerDialog
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.compose.ui.graphics.toArgb
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.data.Expense
+import com.example.budgettrackerapp.data.User
 import com.example.budgettrackerapp.widget.getCategoryIcon
 import com.example.budgettrackerapp.widget.formatDate
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun StatsScreen(viewModel: BudgetViewModel, userId: String)
-{
+fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId: String) {
     // Load data from the databases
     LaunchedEffect(Unit) {
         viewModel.loadExpenses(userId)
         viewModel.loadBudgetSettings()
     }
 
-    val expenses = viewModel.expenses.collectAsState(emptyList()).value
+    val allExpenses = viewModel.expenses.collectAsState(emptyList()).value
 
+    val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+    var startDate by remember { mutableStateOf<LocalDate?>(null) }
+    var endDate by remember { mutableStateOf<LocalDate?>(null) }
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+
+    val expenses = allExpenses.filter { expense ->
+        val expenseDate = LocalDate.parse(expense.date, dateFormatter)
+        (startDate == null || !expenseDate.isBefore(startDate)) &&
+                (endDate == null || !expenseDate.isAfter(endDate))
+    }
     // Grouping the expenses by category and amount
     //https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
     //https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
@@ -79,6 +99,52 @@ fun StatsScreen(viewModel: BudgetViewModel, userId: String)
             style = MaterialTheme.typography.headlineSmall,
             color = themeColors.primary
         )
+
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Date range filters
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(text = "Start Date", color = themeColors.primary)
+                Button(
+                    onClick = { showStartDatePicker = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = themeColors.primary),
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Text(
+                        text = startDate?.toString() ?: "Select Start Date",
+                        color = themeColors.onPrimary
+                    )
+                }
+            }
+            Column {
+                Text(text = "End Date", color = themeColors.primary)
+                Button(
+                    onClick = { showEndDatePicker = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = themeColors.primary),
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Text(
+                        text = endDate?.toString() ?: "Select End Date",
+                        color = themeColors.onPrimary
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Button to clear the date range
+        Button(onClick = {
+            startDate = null
+            endDate = null
+        }) {
+            Text("Clear Date Filter")
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -138,6 +204,8 @@ fun StatsScreen(viewModel: BudgetViewModel, userId: String)
         Spacer(modifier = Modifier.height(20.dp))
 
         // Listing future Payments
+        Spacer(modifier = Modifier.height(20.dp))
+
         Text(
             text = "Payments",
             style = MaterialTheme.typography.titleLarge,
@@ -193,4 +261,39 @@ fun StatsScreen(viewModel: BudgetViewModel, userId: String)
             }
         }
     }
+
+    // Show the date pickers after the UI
+    if (showStartDatePicker) {
+        ShowDatePicker { selectedDate ->
+            startDate = selectedDate
+            showStartDatePicker = false
+        }
+    }
+    if (showEndDatePicker) {
+        ShowDatePicker { selectedDate ->
+            endDate = selectedDate
+            showEndDatePicker = false
+        }
+    }
+}
+
+///Methods to filter expenses based on date
+///https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun ShowDatePicker(onDateSelected: (LocalDate) -> Unit) {
+    val context = LocalContext.current
+    val today = LocalDate.now()
+    val year = today.year
+    val month = today.monthValue - 1
+    val day = today.dayOfMonth
+
+    DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDay ->
+            val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
+            onDateSelected(selectedDate)
+        },
+        year, month, day
+    ).show()
 }
