@@ -1,3 +1,7 @@
+//Reference:https://www.youtube.com/watch?v=dlMByes6wDI
+// This file only needed a small add on from the default
+// It stores which theme is currently being used and handles it by changing the color scheme
+
 package com.example.budgettrackerapp.ui.theme
 
 import android.app.Activity
@@ -57,3 +61,5 @@ fun BudgetTrackerAppTheme(
         content = content
     )
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

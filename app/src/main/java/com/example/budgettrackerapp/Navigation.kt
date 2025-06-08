@@ -16,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,7 +26,7 @@ import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.navbar.MenuDrawer
-import com.example.budgettrackerapp.ui.theme.profile.ProfileScreen
+import com.example.budgettrackerapp.ui.theme.ProfileScreen
 import com.example.budgettrackerapp.ui.theme.rewards.RewardsScreen
 import com.example.budgettrackerapp.ui.theme.splash.SplashScreen
 import com.example.budgettrackerapp.ui.theme.stats.StatsScreen

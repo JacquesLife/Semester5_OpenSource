@@ -3,7 +3,7 @@
 /// such as their username, rank, total budget, remaining budget, and their expenses
 /// They will also be able to logout and edit their monthly budget
 
-package com.example.budgettrackerapp.ui.theme.profile
+package com.example.budgettrackerapp.ui.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

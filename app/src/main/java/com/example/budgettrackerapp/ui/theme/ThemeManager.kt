@@ -1,5 +1,8 @@
-package com.example.budgettrackerapp.ui.theme
+//Reference:https://www.youtube.com/watch?v=dlMByes6wDI
+// This file is responsible fo handling the theme of the app
+//it allows the user to toggle between light and dark mode
 
+package com.example.budgettrackerapp.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,3 +46,5 @@ fun AppTheme(
         content = content
     )
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
