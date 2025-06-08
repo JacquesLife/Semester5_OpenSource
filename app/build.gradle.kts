@@ -39,6 +39,9 @@ android {
     buildFeatures {
         compose = true
     }
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 dependencies {
@@ -46,6 +49,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.fragment)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -53,10 +57,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.benchmark.macro)
     implementation(libs.androidx.navigation.runtime.android)
-    implementation (libs.material3)
-    implementation (libs.ui)
-    implementation (libs.androidx.foundation )
-    implementation (libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.jbcrypt)
     implementation(libs.androidx.runtime.livedata)
@@ -80,9 +82,7 @@ dependencies {
     // Coroutines
     implementation(libs.coroutines.android)
 
-    // Compose & Material3 (already added by you probably)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.material3)
+    // Compose & Material3 (duplicate removed - already added above)
 
     // Jetpack Compose ViewModel integration
     implementation(libs.androidx.lifecycle.viewmodel.compose.v250)
@@ -96,7 +96,7 @@ dependencies {
     // Graph dependency
     implementation(libs.mpandroidchart)
 
-    implementation (libs.androidx.material.icons.extended)
+    implementation(libs.androidx.material.icons.extended)
     implementation(platform(libs.firebase.bom))
     
     // Firebase dependencies

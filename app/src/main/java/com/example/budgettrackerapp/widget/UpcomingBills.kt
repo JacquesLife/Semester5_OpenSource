@@ -318,13 +318,6 @@ fun getCategoryIcon(category: String): Int {
     }
 }
 
-// These functions are now deprecated - use DateUtils instead
-fun formatDate(dateString: String): String {
-    return DateUtils.formatForDisplay(dateString)
-}
-
-fun formatDueDate(dateString: String): String {
-    return DateUtils.formatDueDate(dateString)
-}
+// Deprecated functions removed - use DateUtils instead
 
 //---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
