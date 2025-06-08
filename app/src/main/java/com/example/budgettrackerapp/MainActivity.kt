@@ -11,9 +11,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.budgettrackerapp.data.BudgetViewModel
@@ -48,7 +51,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BudgetTrackerAppTheme {
-                Surface {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     val viewModel: BudgetViewModel = viewModel()
                     AppNavigation(viewModel)
                 }
@@ -109,3 +115,5 @@ fun RequestStoragePermissions() {
         launcher.launch(permissionsToRequest)
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

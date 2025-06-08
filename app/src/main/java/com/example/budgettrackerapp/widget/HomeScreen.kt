@@ -7,12 +7,9 @@ package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,11 +18,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.data.BudgetSettings
 import com.example.budgettrackerapp.data.BudgetViewModel
-import com.example.budgettrackerapp.data.User
 
 @Composable
 fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController, userId: String) {
-    val context = LocalContext.current
+    LocalContext.current
 
     var monthlyBudget by remember { mutableStateOf("") }
     var monthlyMaxGoal by remember { mutableStateOf("") }
@@ -35,24 +31,30 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F8F8))
-            .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)
     ) {
         // Set your budget goals
         Text("Set Your Budget Goals", fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Input fields for monthly budget, max goal, and min goal
+        // Monthly Budget Input
         OutlinedTextField(
             value = monthlyBudget,
             onValueChange = { monthlyBudget = it },
-            label = { Text("Monthly Budget") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Monthly Budget", color = MaterialTheme.colorScheme.onSurface) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
         )
+
         Spacer(modifier = Modifier.height(16.dp))
+
         // Input fields for monthly budget, max goal, and min goal
         OutlinedTextField(
             value = monthlyMaxGoal,
@@ -73,7 +75,6 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Submit button to save the goals
         Button(
             onClick = {
                 val settings = BudgetSettings(
@@ -87,12 +88,10 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
                 // Navigate to the upcoming bills screen
                 navController.navigate("upcoming_bills/$userId")
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(25.dp)
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("Submit", color = Color.White)
+            Text("Submit", color = MaterialTheme.colorScheme.onPrimary)
         }
     }
 }

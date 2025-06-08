@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,15 +32,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
-import com.example.budgettrackerapp.data.User
-import com.example.budgettrackerapp.ui.theme.DarkBlue
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.net.toUri
 
 @Composable
 fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), userId: String) {
-    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-    val oneMonthLater = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
         Calendar.getInstance().apply { add(Calendar.MONTH, 1) }.time
     )
 
@@ -56,7 +56,7 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
     val paidBillsAmount = 0.0
 
     Surface(modifier = Modifier.fillMaxSize()) {
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout {
             val (imageRef, nameRow, card, list) = createRefs()
 
             Image(
@@ -80,8 +80,8 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
                     }
             ) {
                 Column {
-                    ExpenseTextView("Upcoming Bills", fontSize = 24.sp, color = Color.White)
-                    ExpenseTextView("Search your Transactions", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    ExpenseTextView("Upcoming Bills", fontSize = 24.sp, color = MaterialTheme.colorScheme.onPrimary)
+                    ExpenseTextView("Search your Transactions", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                 }
                 Image(
                     painter = painterResource(id = R.drawable.bell),
@@ -127,13 +127,13 @@ fun BillCardItem(modifier: Modifier, totalBalance: Double, upcomingBillsAmount: 
             .fillMaxWidth()
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(DarkBlue)
+            .background(MaterialTheme.colorScheme.primary)
             .padding(16.dp)
     ) {
         Box(Modifier.fillMaxWidth().weight(1f)) {
             Column(Modifier.align(Alignment.CenterStart)) {
-                ExpenseTextView("Total Balance", fontSize = 16.sp, color = Color.White)
-                ExpenseTextView("R%.2f".format(totalBalance), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                ExpenseTextView("Total Balance", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
+                ExpenseTextView("R%.2f".format(totalBalance), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
             }
             Image(painter = painterResource(id = R.drawable.dotsmenue), contentDescription = null, modifier = Modifier.align(Alignment.CenterEnd))
         }
@@ -150,15 +150,15 @@ fun BillCardRowItem(modifier: Modifier, title: String, amount: String, image: In
         Row {
             Image(painter = painterResource(id = image), contentDescription = null)
             Spacer(Modifier.size(8.dp))
-            ExpenseTextView(title, fontSize = 16.sp, color = Color.White)
+            ExpenseTextView(title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
         }
-        ExpenseTextView(amount, fontSize = 20.sp, color = Color.White)
+        ExpenseTextView(amount, fontSize = 20.sp, color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
 @Composable
 fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses: List<Expense>, userId: String) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Upcoming Bills", "Transactions")
 
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
@@ -166,7 +166,7 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .background(Color(0xFFF5F5F5), RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
                 .padding(4.dp)
         ) {
             tabs.forEachIndexed { index, title ->
@@ -174,29 +174,33 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
                     modifier = Modifier
                         .weight(1f)
                         .height(40.dp)
-                        .background(if (selectedTab == index) Color.White else Color.Transparent, RoundedCornerShape(20.dp))
+                        .background(if (selectedTab == index) MaterialTheme.colorScheme.surface else Color.Transparent, RoundedCornerShape(20.dp))
                         .clickable {
                             selectedTab = index
                             if (index == 1) navController.navigate("transaction/$userId")
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    ExpenseTextView(title, fontSize = 16.sp, color = if (selectedTab == index) Color.Black else Color.Gray)
+                    ExpenseTextView(
+                        title,
+                        fontSize = 16.sp,
+                        color = if (selectedTab == index) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
                 }
             }
         }
 
         if (selectedTab == 0) {
-            UpcomingBillItems(expenses, navController)
+            UpcomingBillItems(expenses)
         }
     }
 }
 
 @Composable
-fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
+fun UpcomingBillItems(expenses: List<Expense>) {
     val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
     var allExpanded by remember { mutableStateOf(false) }
-    
+
     // Filter expenses to only show those that are bills (have notifications enabled or are recurring)
     val upcomingBills = expenses.filter { expense ->
         expense.notificationEnabled || expense.isRecurring
@@ -211,10 +215,11 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            ExpenseTextView("Upcoming Bills", fontSize = 20.sp)
+            ExpenseTextView("Upcoming Bills", fontSize = 20.sp, color = MaterialTheme.colorScheme.onBackground)
             ExpenseTextView(
                 if (allExpanded) "Collapse All" else "Expand All",
                 fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .clickable {
@@ -235,7 +240,7 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
                     .padding(vertical = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                ExpenseTextView("No upcoming bills found", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                ExpenseTextView("No upcoming bills found", fontSize = 16.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)
             }
         } else {
             val grouped = upcomingBills.groupBy { it.category }
@@ -250,7 +255,7 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
                     }
                     .padding(vertical = 8.dp)
                 ) {
-                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDueDate(items.first().date), Color.Red)
+                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDate(items.first().date), MaterialTheme.colorScheme.error)
 
                     if (expanded) {
                         items.forEach { item ->
@@ -269,11 +274,11 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
         }
     }
 }
+
 @Composable
 fun BillItem(title: String, amount: String, icon: Int, date: String, color: Color, photoUri: String? = null) {
     Box(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Show category icon if no photo, otherwise show the photo
             if (photoUri == null) {
                 Image(
                     painter = painterResource(id = icon),
@@ -281,9 +286,8 @@ fun BillItem(title: String, amount: String, icon: Int, date: String, color: Colo
                     modifier = Modifier.size(50.dp)
                 )
             } else {
-                // Display the receipt image
                 Image(
-                    painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
+                    painter = rememberAsyncImagePainter(photoUri.toUri()),
                     contentDescription = "Receipt",
                     modifier = Modifier
                         .size(50.dp)
@@ -293,8 +297,8 @@ fun BillItem(title: String, amount: String, icon: Int, date: String, color: Colo
             }
             Spacer(Modifier.size(8.dp))
             Column {
-                ExpenseTextView(title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                ExpenseTextView(date, fontSize = 12.sp)
+                ExpenseTextView(title, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onBackground)
+                ExpenseTextView(date, fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f))
             }
         }
         ExpenseTextView(amount, fontSize = 20.sp, modifier = Modifier.align(Alignment.CenterEnd), color = color, fontWeight = FontWeight.SemiBold)
@@ -334,7 +338,7 @@ fun formatDueDate(dateString: String): String {
         val dueDate = input.parse(dateString) ?: return dateString
         val today = Date()
         val daysDiff = ((dueDate.time - today.time) / (1000 * 60 * 60 * 24)).toInt()
-        
+
         when {
             daysDiff < 0 -> "Overdue (${output.format(dueDate)})"
             daysDiff == 0 -> "Due Today"

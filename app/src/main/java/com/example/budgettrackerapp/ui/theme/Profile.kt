@@ -3,7 +3,7 @@
 /// such as their username, rank, total budget, remaining budget, and their expenses
 /// They will also be able to logout and edit their monthly budget
 
-package com.example.budgettrackerapp.ui.theme.profile
+package com.example.budgettrackerapp.ui.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,79 +26,75 @@ fun ProfileScreen(
     username: String = "John Doe",
     rank: String = "Gold"
 ) {
+    val user by viewModel.loginResult.collectAsState()
     val budgetSettings by viewModel.budgetSettings.collectAsState()
-    val expenses by viewModel.expenses.collectAsState()
-
-    val totalBudget = budgetSettings?.monthlyBudget ?: 0.0
-    val spent = expenses.sumOf { it.amount }
-    val remainingBudget = (totalBudget - spent).coerceAtLeast(0.0)
-
-    val user = viewModel.loginResult.collectAsState().value
-
-    // Load data when the user is logged in
-    LaunchedEffect(user) {
-        if (user != null) {
-            viewModel.loadBudgetSettings()
-            viewModel.loadExpenses(user.userId)
-        }
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Profile picture
         Box(
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
-                .background(Color.LightGray),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
-            Text("Photo", color = Color.White, fontSize = 16.sp)
+            Text("Photo", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // Username
         Text(
             text = username,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.primary
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Rank
         Text(
             text = "Rank: $rank",
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Monthly Budget
         Text(
-            text = "Total Budget: R %.2f".format(totalBudget),
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.Black
+            text = "Monthly Budget",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Text(
-            text = "Remaining: R %.2f".format(remainingBudget),
-            style = MaterialTheme.typography.titleLarge,
-            color = Color(0xFF2E7D32)
+            text = "R${budgetSettings?.monthlyBudget ?: 0.0}",
+            fontSize = 24.sp,
+            color = MaterialTheme.colorScheme.primary
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Button for Edit Monthly Budget (Directs to Home Screen)
+        // Buttons
         Button(
             onClick = {
                 navController.navigate("home/${user?.userId}")
-                },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5B8DEF))
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("Edit Monthly Budget", color = Color.White)
+            Text("Edit Monthly Budget", color = MaterialTheme.colorScheme.onPrimary)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
@@ -108,9 +104,9 @@ fun ProfileScreen(
                     launchSingleTop = true
                 }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
-            Text("Logout", color = Color.White)
+            Text("Logout", color = MaterialTheme.colorScheme.onError)
         }
     }
 }

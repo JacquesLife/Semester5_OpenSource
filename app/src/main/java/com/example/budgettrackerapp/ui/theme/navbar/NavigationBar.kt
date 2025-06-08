@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -33,7 +32,7 @@ fun BottomNavBar(navController: NavController, userId: String) {
     val items = listOf(
         BottomNavItem("Home", R.drawable.home, "upcoming_bills/$userId"),
         BottomNavItem("stats", R.drawable.chart, "stats/$userId"),
-        BottomNavItem("Wallet", R.drawable.wallet, "wallet"),
+        BottomNavItem("Wallet", R.drawable.wallet, "wallet/$userId"),
         BottomNavItem("profile", R.drawable.user, "profile/$userId")
     )
 
@@ -43,10 +42,9 @@ fun BottomNavBar(navController: NavController, userId: String) {
         modifier = Modifier.fillMaxWidth()
     ) {
         NavigationBar(
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 0.dp
         ) {
-
             // Get the current route to highlight the selected item
             val navBackStackEntry = navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry.value?.destination?.route
@@ -63,14 +61,12 @@ fun BottomNavBar(navController: NavController, userId: String) {
                         Icon(
                             painter = painterResource(id = item.iconResId),
                             contentDescription = item.title,
-                            tint = if (currentRoute == item.route) Color(0xFF5B8DEF) else Color.Gray
+                            tint = if (currentRoute == item.route) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     },
-                    // Set the label to null to hide it
                     label = null,
                     selected = currentRoute == item.route,
                     onClick = {
-                        // Navigate to the corresponding screen
                         if (currentRoute != item.route) {
                             navController.navigate(item.route) {
                                 popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -80,9 +76,9 @@ fun BottomNavBar(navController: NavController, userId: String) {
                         }
                     },
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color(0xFF5B8DEF),
-                        indicatorColor = Color.White,
-                        unselectedIconColor = Color.Gray
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.surface,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 )
 
@@ -96,23 +92,21 @@ fun BottomNavBar(navController: NavController, userId: String) {
         // Floating Action Button (FAB)
         FloatingActionButton(
             onClick = {
-                // Navigate to the add expense screen
                 navController.navigate("add_expense?initialAmount=0.00&userId=$userId") {
                     launchSingleTop = true
                 }
             },
-            containerColor = Color(0xFF5B8DEF),
-            contentColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             shape = CircleShape,
             modifier = Modifier
                 .size(56.dp)
                 .shadow(8.dp, CircleShape)
         ) {
-            // Icon for the FAB
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Add Expense",
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
