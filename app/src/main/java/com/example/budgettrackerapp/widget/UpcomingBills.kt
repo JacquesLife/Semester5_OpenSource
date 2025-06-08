@@ -4,7 +4,6 @@
 
 package com.example.budgettrackerapp.widget
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,15 +30,14 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
-import com.example.budgettrackerapp.data.User
-import com.example.budgettrackerapp.ui.theme.DarkBlue
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.net.toUri
 
 @Composable
 fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), userId: String) {
-    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-    val oneMonthLater = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
+    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
         Calendar.getInstance().apply { add(Calendar.MONTH, 1) }.time
     )
 
@@ -159,7 +156,7 @@ fun BillCardRowItem(modifier: Modifier, title: String, amount: String, image: In
 
 @Composable
 fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses: List<Expense>, userId: String) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Upcoming Bills", "Transactions")
 
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
@@ -192,13 +189,13 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
         }
 
         if (selectedTab == 0) {
-            UpcomingBillItems(expenses, navController)
+            UpcomingBillItems(expenses)
         }
     }
 }
 
 @Composable
-fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
+fun UpcomingBillItems(expenses: List<Expense>) {
     val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
     var allExpanded by remember { mutableStateOf(false) }
 
@@ -276,7 +273,7 @@ fun BillItem(title: String, amount: String, icon: Int, date: String, color: Colo
                 )
             } else {
                 Image(
-                    painter = rememberAsyncImagePainter(Uri.parse(photoUri)),
+                    painter = rememberAsyncImagePainter(photoUri.toUri()),
                     contentDescription = "Receipt",
                     modifier = Modifier
                         .size(50.dp)

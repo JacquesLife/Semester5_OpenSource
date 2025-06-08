@@ -16,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -49,10 +48,10 @@ fun AppNavigation(viewModel: BudgetViewModel) {
 
     // Get the current user information
     val loggedInUser = viewModel.loginResult.collectAsState().value
-    val currentUserId = loggedInUser?.userId
+    loggedInUser?.userId
 
     // Define routes that don't show bottom navigation
-    val routesWithoutBottomNav = setOf(
+    setOf(
         "splash",
         "login"
     )
@@ -187,7 +186,6 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     ) { backStackEntry ->
                         val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
                         StatsScreen(
-                            navController = navController,
                             viewModel = viewModel,
                             userId = userId
                         )
@@ -204,9 +202,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                     ) { backStackEntry ->
                         val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
                         RewardsScreen(
-                            navController = navController,
-                            viewModel = viewModel,
-                            userId = userId
+                            viewModel = viewModel
                         )
                     }
 
@@ -219,7 +215,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        backStackEntry.arguments?.getString("userId") ?: return@composable
                         val loggedInUser by viewModel.loginResult.collectAsState()
                         val username = loggedInUser?.username ?: "User"
 
@@ -239,12 +235,8 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                        SettingsScreen(
-                            navController = navController,
-                            viewModel = viewModel,
-                            userId = userId
-                        )
+                        backStackEntry.arguments?.getString("userId") ?: return@composable
+                        SettingsScreen()
                     }
 
                     // Help screen (no user ID required)

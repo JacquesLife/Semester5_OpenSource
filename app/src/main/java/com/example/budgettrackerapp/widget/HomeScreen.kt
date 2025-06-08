@@ -7,10 +7,8 @@ package com.example.budgettrackerapp.widget
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -20,11 +18,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.data.BudgetSettings
 import com.example.budgettrackerapp.data.BudgetViewModel
-import com.example.budgettrackerapp.data.User
 
 @Composable
 fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavController, userId: String) {
-    val context = LocalContext.current
+    LocalContext.current
 
     var monthlyBudget by remember { mutableStateOf("") }
     var monthlyMaxGoal by remember { mutableStateOf("") }

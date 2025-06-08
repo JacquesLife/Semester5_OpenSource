@@ -8,7 +8,6 @@ package com.example.budgettrackerapp.widget
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -82,7 +81,7 @@ fun LoginScreen(
                 } else {
                     viewModel.registerUser(
                         User(username = username, password = password)
-                    ) { success, message ->
+                    ) { _, message ->
                         errorMessage = message
                     }
                 }

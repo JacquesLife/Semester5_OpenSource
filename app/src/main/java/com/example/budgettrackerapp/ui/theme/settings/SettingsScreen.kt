@@ -6,16 +6,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.ThemeManager
 
 @Composable
-fun SettingsScreen(
-    navController: NavController,
-    viewModel: BudgetViewModel,
-    userId: String
-) {
+fun SettingsScreen() {
     var isDarkMode by remember { mutableStateOf(ThemeManager.isDarkModeEnabled()) }
 
     Column(
@@ -50,7 +44,7 @@ fun SettingsScreen(
             )
         }
 
-        Divider(modifier = Modifier.padding(vertical = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
         // Add more settings options here as needed
     }

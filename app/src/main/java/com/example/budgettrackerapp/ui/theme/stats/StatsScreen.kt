@@ -20,21 +20,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.compose.ui.graphics.toArgb
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.example.budgettrackerapp.data.BudgetViewModel
-import com.example.budgettrackerapp.data.Expense
-import com.example.budgettrackerapp.data.User
 import com.example.budgettrackerapp.widget.getCategoryIcon
 import com.example.budgettrackerapp.widget.formatDate
 
 @Composable
-fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId: String)
+fun StatsScreen(viewModel: BudgetViewModel, userId: String)
 {
     // Load data from the databases
     LaunchedEffect(Unit) {
@@ -67,7 +63,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
         Color(0xFF7986CB), // blue grey
         Color(0xFFE57373)  // red
     )
-    val sliceColors = categories.mapIndexed { index, _ -> baseColors[index % baseColors.size].toArgb() }
+    val sliceColors = List(categories.size) { index -> baseColors[index % baseColors.size].toArgb() }
 
     val scrollState = rememberScrollState()
 
@@ -94,8 +90,8 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                     description.isEnabled = false
                     legend.isEnabled = false
                     setDrawEntryLabels(false)
-                    setHoleRadius(0f)
-                    setTransparentCircleRadius(0f)
+                    holeRadius = 0f
+                    transparentCircleRadius = 0f
                 }
             },
 

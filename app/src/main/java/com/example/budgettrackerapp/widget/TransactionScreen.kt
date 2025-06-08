@@ -5,7 +5,6 @@
 
 package com.example.budgettrackerapp.widget
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,10 +41,10 @@ import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
-import com.example.budgettrackerapp.ui.theme.DarkBlue
 import coil.compose.rememberAsyncImagePainter
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.core.net.toUri
 
 @Composable
 fun TransactionScreen(navController: NavController, viewModel: BudgetViewModel, userId: String) {
@@ -168,12 +167,11 @@ fun TransactionCardRowItem(modifier: Modifier, title: String, amount: String, im
 
 @Composable
 fun TransactionList(modifier: Modifier, navController: NavController, expenses: List<Expense>, userId: String) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Transactions", "Upcoming Bills")
 
     // Search state
     var searchQuery by remember { mutableStateOf("") }
-    var isSearchActive by remember { mutableStateOf(false) }
 
     // Date filter
     var startDate by remember { mutableStateOf("") }
@@ -257,12 +255,12 @@ fun TransactionList(modifier: Modifier, navController: NavController, expenses: 
                 }
 
                 // Debug
-                Log.d("DateFilter", "Normalized - Expense date: ${normalizedExpenseDate}, Start: ${normalizedStart}, End: ${normalizedEnd}")
+                Log.d("DateFilter", "Normalized - Expense date: ${normalizedExpenseDate}, Start: ${normalizedStart}, End: $normalizedEnd")
 
                 // Make sure all dates are valid before comparing
                 if (normalizedExpenseDate != null && normalizedStart != null && normalizedEnd != null) {
                     // Check if expense date is within range (inclusive of both start and end dates)
-                    normalizedExpenseDate.compareTo(normalizedStart) >= 0 && normalizedExpenseDate.compareTo(normalizedEnd) <= 0
+                    normalizedExpenseDate >= normalizedStart && normalizedExpenseDate <= normalizedEnd
                 } else {
                     Log.d("DateFilter", "Null date after parsing, skipping expense")
                     false
@@ -519,10 +517,10 @@ fun TransactionList(modifier: Modifier, navController: NavController, expenses: 
                         }
                     }
 
-                    Divider(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 8.dp),
                         thickness = 1.dp,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        color = MaterialTheme.colorScheme.surfaceVariant
                     )
                 }
             }
@@ -589,7 +587,7 @@ fun TransactionDetailItem(
             // Show receipt image if available, otherwise show category icon
             if (expense.photoUri != null) {
                 Image(
-                    painter = rememberAsyncImagePainter(Uri.parse(expense.photoUri)),
+                    painter = rememberAsyncImagePainter(expense.photoUri.toUri()),
                     contentDescription = "Receipt",
                     modifier = Modifier
                         .size(40.dp)
@@ -608,7 +606,7 @@ fun TransactionDetailItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 ExpenseTextView(
-                    text = if (expense.description.isNotBlank()) expense.description else expense.category,
+                    text = expense.description.ifBlank { expense.category },
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface

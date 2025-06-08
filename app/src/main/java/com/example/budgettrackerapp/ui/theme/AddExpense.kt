@@ -24,7 +24,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -36,24 +35,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
 import com.example.budgettrackerapp.widget.ExpenseTextView
-import okhttp3.internal.userAgent
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,7 +56,7 @@ import java.util.*
 fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00", userId: String) {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (imageRef, nameRow, list, card) = createRefs()
+            val (imageRef, nameRow, _, card) = createRefs()
 
             // Background image
             Image(
@@ -280,7 +275,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = if (date.isEmpty()) "Select date" else date,
+                    text = date.ifEmpty { "Select date" },
                     color = if (date.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface
                 )
             }

@@ -15,11 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import kotlin.math.min
-import kotlin.math.max
 
 // Data class for reward tier information
 data class RewardTier(
@@ -42,9 +40,7 @@ object RewardTiers {
 
 @Composable
 fun RewardsScreen(
-    navController: NavController,
-    viewModel: BudgetViewModel,
-    userId: String
+    viewModel: BudgetViewModel
 ) {
     val budgetSettings by viewModel.budgetSettings.collectAsState()
     val expenses by viewModel.expenses.collectAsState()
@@ -64,10 +60,10 @@ fun RewardsScreen(
     // Get budget settings
     val minGoal = budgetSettings?.monthlyMinGoal ?: 0.0
     val maxGoal = budgetSettings?.monthlyMaxGoal ?: 0.0
-    val monthlyBudget = budgetSettings?.monthlyBudget ?: 0.0
+    budgetSettings?.monthlyBudget ?: 0.0
 
     // Calculate user points and tier
-    val userPoints = calculateUserPoints(totalSpent, minGoal, maxGoal, monthlyBudget)
+    val userPoints = calculateUserPoints(totalSpent, minGoal, maxGoal)
     val currentTier = getUserTier(userPoints)
     val (minPoints, maxPoints) = getTierRange(currentTier)
     val progressFraction = calculateProgress(userPoints, minPoints, maxPoints)
@@ -202,12 +198,12 @@ private fun ProgressSection(
     maxPoints: Int
 ) {
     LinearProgressIndicator(
-        progress = progressFraction,
+        progress = { progressFraction },
         modifier = Modifier
             .fillMaxWidth()
             .height(12.dp),
         color = currentTier.color,
-        trackColor = MaterialTheme.colorScheme.surfaceVariant
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
     )
 
     Spacer(modifier = Modifier.height(8.dp))
@@ -316,7 +312,7 @@ private fun TierCard(tier: RewardTier, currentPoints: Int) {
 }
 
 // Business Logic Functions
-private fun calculateUserPoints(totalSpent: Double, minGoal: Double, maxGoal: Double, monthlyBudget: Double): Int {
+private fun calculateUserPoints(totalSpent: Double, minGoal: Double, maxGoal: Double): Int {
     if (minGoal <= 0 || maxGoal <= 0) return 0
     if (totalSpent < minGoal || totalSpent > maxGoal) return 0
 

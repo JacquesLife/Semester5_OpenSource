@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -84,7 +85,7 @@ fun MenuDrawer(
         ),
         DrawerMenuItem(
             title = "Help & Support",
-            icon = Icons.Filled.Help,
+            icon = Icons.AutoMirrored.Filled.Help,
             route = "help",
             requiresUserId = false
         )
@@ -120,7 +121,6 @@ fun MenuDrawer(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 LogoutItem(
-                    userId = userId,
                     navController = navController,
                     viewModel = viewModel,
                     onCloseDrawer = onCloseDrawer
@@ -228,7 +228,6 @@ fun DrawerItem(
 
 @Composable
 fun LogoutItem(
-    userId: Comparable<*>,
     navController: NavController,
     viewModel: BudgetViewModel,
     onCloseDrawer: () -> Unit
@@ -248,7 +247,7 @@ fun LogoutItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Filled.ExitToApp,
+            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
             contentDescription = "Logout",
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(24.dp)
