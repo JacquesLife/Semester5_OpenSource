@@ -53,12 +53,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.benchmark.macro)
     implementation(libs.androidx.navigation.runtime.android)
-    implementation ("androidx.compose.material3:material3:1.3.2")
-    implementation ("androidx.compose.ui:ui:1.8.0")
-    implementation ("androidx.compose.foundation:foundation:1.8.0" )
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation (libs.material3)
+    implementation (libs.ui)
+    implementation (libs.androidx.foundation )
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation("org.mindrot:jbcrypt:0.4")
+    implementation(libs.jbcrypt)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.adapters)
     implementation(libs.firebase.firestore.ktx)
@@ -70,7 +70,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("androidx.constraintlayout:constraintlayout-compose-android:1.1.1")
+    implementation(libs.androidx.constraintlayout.compose.android)
     
     // ViewModel + LiveData
     implementation(libs.lifecycle.viewmodel)
@@ -84,31 +84,31 @@ dependencies {
     implementation(libs.androidx.material3)
 
     // Jetpack Compose ViewModel integration
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose.v250)
 
     // Jetpack Compose Navigation
-    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation(libs.androidx.activity.compose.v170)
 
     // Jetpack Compose Coil
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation(libs.coil.compose)
 
     // Graph dependency
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation(libs.mpandroidchart)
 
-    implementation ("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation (libs.androidx.material.icons.extended)
+    implementation(platform(libs.firebase.bom))
     
     // Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-database-ktx")
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.database.ktx)
 
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
     
     // WorkManager for background tasks
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation(libs.androidx.work.runtime.ktx)
     
     // Notification support
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation(libs.androidx.core.ktx.v1120)
 }
