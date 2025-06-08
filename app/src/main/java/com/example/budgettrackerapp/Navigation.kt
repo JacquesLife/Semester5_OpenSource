@@ -37,6 +37,7 @@ import com.example.budgettrackerapp.widget.TransactionScreen
 import com.example.budgettrackerapp.widget.UpcomingBillsScreen
 import kotlinx.coroutines.launch
 import com.example.budgettrackerapp.ui.theme.settings.SettingsScreen
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,8 +57,30 @@ fun AppNavigation(viewModel: BudgetViewModel) {
         "login"
     )
 
-    // Bottom navigation bar
+    // Main Scaffold with conditional bottom navigation
     Scaffold(
+        topBar = {
+            if (currentRoute != null &&
+                currentRoute != "splash" &&
+                currentRoute != "login" &&
+                !currentRoute.startsWith("add_expense")
+            ) {
+                TopAppBar(
+                    title = { },
+                    actions = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(
+                                imageVector = Icons.Filled.MoreVert,
+                                contentDescription = "Menu"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
+                )
+            }
+        },
         bottomBar = {
             if (currentRoute != null &&
                 currentRoute != "splash" &&
@@ -66,120 +89,20 @@ fun AppNavigation(viewModel: BudgetViewModel) {
             ) {
                 BottomNavBar(navController = navController, userId = loggedInUser?.userId ?: "")
             }
-
         }
-        // Main content
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-
-            // Navigation graph
-            NavHost(
-                navController = navController,
-                startDestination = "splash"
-            ) {
-                // Navigation routes
-                composable("splash") {
-                    SplashScreen(navController)
-                }
-                // Home route with user ID argument
-                composable("home/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                    HomeScreen(navController = navController, viewModel = viewModel, userId = userId)
-                }
-                // Transaction route with user ID argument
-                composable("transaction/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                    TransactionScreen(navController = navController, viewModel = viewModel, userId = userId)
-                }
-                // Upcoming bills route with user ID argument
-                composable("upcoming_bills/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                    UpcomingBillsScreen(navController = navController, viewModel = viewModel, userId = userId)
-                }
-                // Stats route with user ID argument
-                composable("stats/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                    StatsScreen(navController = navController, viewModel = viewModel, userId = userId)
-                }
-                // Rewards route with user ID argument - FIXED
-                composable("wallet/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                    RewardsScreen(
-                        navController = navController,
-                        viewModel = viewModel,
-                        userId = userId
-                    )
-                }
-                // Profile route with user ID argument
-                composable("profile/{userId}") { backStackEntry ->
-                    val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                    val loggedInUser by viewModel.loginResult.collectAsState()
-                    val username = loggedInUser?.username ?: "User"
-
-                            ProfileScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                username = username
-                            )
-                        }
-
-                        // Settings screen with user ID
-                        composable(
-                            route = "settings/{userId}",
-                            arguments = listOf(
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            SettingsScreen(
-                                navController = navController,
-                                viewModel = viewModel,
-                                userId = userId
-                            )
-                        }
-
-                        // Help screen (no user ID required)
-                        composable("help") {
-                            // Create your HelpScreen composable
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text("Help & Support Screen")
-                            }
-                        }
-
-                        // Add expense screen with optional initial amount and required user ID
-                        composable(
-                            route = "add_expense?initialAmount={initialAmount}&userId={userId}",
-                            arguments = listOf(
-                                navArgument("initialAmount") {
-                                    type = NavType.StringType
-                                    defaultValue = "0.00"
-                                },
-                                navArgument("userId") {
-                                    type = NavType.StringType
-                                }
-                            )
-                        ) { backStackEntry ->
-                            val initialAmount = backStackEntry.arguments?.getString("initialAmount") ?: "0.00"
-                            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
-                            AddExpense(
-                                navController = navController,
-                                initialAmount = initialAmount,
-                                userId = userId
-                            )
-                        }
-                    }
-                }
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                MenuDrawer(
+                    navController = navController,
+                    viewModel = viewModel,
+                    onCloseDrawer = { scope.launch { drawerState.close() } }
+                )
             }
-        }
-    } else {
-        // Show content without drawer for splash and login screens
-        Scaffold { innerPadding ->
+        ) {
             Box(modifier = Modifier.padding(innerPadding)) {
+                // Single Navigation graph
                 NavHost(
                     navController = navController,
                     startDestination = "splash"
@@ -236,7 +159,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         )
                     }
 
-                    // Upcoming bills screen (acts as home/dashboard)
+                    // Upcoming bills screen with user ID
                     composable(
                         route = "upcoming_bills/{userId}",
                         arguments = listOf(
@@ -270,9 +193,21 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         )
                     }
 
-                    // Wallet/Rewards screen (no user ID required)
-                    composable("wallet") {
-                        RewardsScreen()
+                    // Wallet/Rewards screen with user ID - FIXED
+                    composable(
+                        route = "wallet/{userId}",
+                        arguments = listOf(
+                            navArgument("userId") {
+                                type = NavType.StringType
+                            }
+                        )
+                    ) { backStackEntry ->
+                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        RewardsScreen(
+                            navController = navController,
+                            viewModel = viewModel,
+                            userId = userId
+                        )
                     }
 
                     // Profile screen with user ID
@@ -314,7 +249,6 @@ fun AppNavigation(viewModel: BudgetViewModel) {
 
                     // Help screen (no user ID required)
                     composable("help") {
-                        // Create your HelpScreen composable
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -345,10 +279,7 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         )
                     }
                 }
-
             }
         }
     }
 }
-
-//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

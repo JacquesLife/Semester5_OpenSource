@@ -68,7 +68,7 @@ fun MenuDrawer(
             title = "Wallet",
             iconResId = R.drawable.wallet,
             route = "wallet",
-            requiresUserId = false
+            requiresUserId = true
         ),
         DrawerMenuItem(
             title = "Profile",
