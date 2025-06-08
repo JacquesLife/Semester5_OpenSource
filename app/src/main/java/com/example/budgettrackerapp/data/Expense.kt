@@ -18,5 +18,5 @@ data class Expense(
     val notificationDaysBefore: Int = 3 // How many days before due date to notify
 ) {
     // No-argument constructor required by Firebase
-    constructor() : this("", 0.0, "", "", false, "", "", "", "", "", "", null, "", true, 3)
+    constructor() : this("", 0.0, "", "", false, "", "", "", "", "", null, "", true, 3)
 }
