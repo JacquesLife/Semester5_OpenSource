@@ -31,7 +31,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.widget.getCategoryIcon
-import com.example.budgettrackerapp.widget.formatDate
+import com.example.budgettrackerapp.utils.DateUtils
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -246,7 +246,7 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
                             )
                             // Displaying the expense details with proper string formatting
                             Text(
-                                text = "${expense.description} - R%.2f - Due: ${formatDate(expense.date)}".format(expense.amount),
+                                text = "${expense.description} - R%.2f - Due: ${DateUtils.formatForDisplay(expense.date)}".format(expense.amount),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = themeColors.onBackground
                             )
