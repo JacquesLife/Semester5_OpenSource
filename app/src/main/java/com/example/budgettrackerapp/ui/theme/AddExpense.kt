@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -122,6 +123,8 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
                         top.linkTo(nameRow.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.fillToConstraints
                     }
             )
         }
@@ -185,14 +188,19 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
 
     Column(
         modifier = modifier
+            .fillMaxSize()
             .padding(16.dp)
-            .fillMaxWidth()
-            .shadow(16.dp)
-            .background(Color.White)
-            .clip(RoundedCornerShape(16.dp))
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .shadow(16.dp)
+                .background(Color.White)
+                .clip(RoundedCornerShape(16.dp))
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
         // Expense description
         ExpenseTextView(text = "CATEGORY", fontSize = 14.sp, color = Color.Gray)
         Spacer(modifier = Modifier.size(4.dp))
@@ -455,6 +463,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "0.00
                 .fillMaxWidth()
         ) {
             Text("Add Expense", color = Color.White)
+        }
         }
     }
 }
