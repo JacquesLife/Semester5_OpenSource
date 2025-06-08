@@ -58,7 +58,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun AddExpense(navController: NavController? = null, initialAmount: String = "0.00", userId: String) {
+fun AddExpense(navController: NavController? = null, initialAmount: String = "", userId: String) {
     Surface(modifier = Modifier.fillMaxSize()) {
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (imageRef, nameRow, list, card) = createRefs()
@@ -132,7 +132,7 @@ fun AddExpense(navController: NavController? = null, initialAmount: String = "0.
 }
 
 @Composable
-fun DataForm(navController: NavController? = null, initialAmount: String = "0.00", userId: String, modifier: Modifier) {
+fun DataForm(navController: NavController? = null, initialAmount: String = "", userId: String, modifier: Modifier) {
     val context = LocalContext.current
     var selectedCategory by remember { mutableStateOf("Select Category") }
     var amount by remember { mutableStateOf(initialAmount) }

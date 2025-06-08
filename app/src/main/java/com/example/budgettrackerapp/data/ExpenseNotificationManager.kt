@@ -44,18 +44,5 @@ class ExpenseNotificationManager(private val context: Context) {
         WorkManager.getInstance(context).enqueue(workRequest)
     }
     
-    // For testing - send a test notification immediately
-    fun sendTestNotification() {
-        val notificationService = NotificationService(context)
-        val testExpense = Expense(
-            id = "test",
-            description = "Test Bill",
-            category = "Utilities",
-            amount = 100.0,
-            date = "2025-01-10",
-            userOwnerId = "test",
-            notificationEnabled = true
-        )
-        notificationService.sendExpenseDueNotification(testExpense, 1)
-    }
+
 } 
