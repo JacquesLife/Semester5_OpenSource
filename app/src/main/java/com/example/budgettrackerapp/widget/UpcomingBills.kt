@@ -32,6 +32,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
+import com.example.budgettrackerapp.utils.DateUtils
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.net.toUri
@@ -206,11 +207,7 @@ fun UpcomingBillItems(expenses: List<Expense>) {
         expense.notificationEnabled || expense.isRecurring
     }.sortedBy { expense ->
         // Sort by date
-        try {
-            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(expense.date)
-        } catch (e: Exception) {
-            Date()
-        }
+        DateUtils.parseDate(expense.date)
     }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -255,12 +252,12 @@ fun UpcomingBillItems(expenses: List<Expense>) {
                     }
                     .padding(vertical = 8.dp)
                 ) {
-                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDate(items.first().date), MaterialTheme.colorScheme.error)
+                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), DateUtils.formatForDisplay(items.first().date), MaterialTheme.colorScheme.error)
 
                     if (expanded) {
                         items.forEach { item ->
                             BillItem(
-                                title = "${item.description} (Due: ${formatDueDate(item.date)})",
+                                title = "${item.description} (Due: ${DateUtils.formatDueDate(item.date)})",
                                 amount = "R%.2f".format(item.amount),
                                 icon = getCategoryIcon(item.category),
                                 date = if (item.isRecurring) "Recurring ${item.recurringInterval}" else "One-time",
@@ -321,34 +318,13 @@ fun getCategoryIcon(category: String): Int {
     }
 }
 
+// These functions are now deprecated - use DateUtils instead
 fun formatDate(dateString: String): String {
-    return try {
-        val input = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val output = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        output.format(input.parse(dateString) ?: Date())
-    } catch (e: Exception) {
-        dateString
-    }
+    return DateUtils.formatForDisplay(dateString)
 }
 
 fun formatDueDate(dateString: String): String {
-    return try {
-        val input = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val output = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        val dueDate = input.parse(dateString) ?: return dateString
-        val today = Date()
-        val daysDiff = ((dueDate.time - today.time) / (1000 * 60 * 60 * 24)).toInt()
-
-        when {
-            daysDiff < 0 -> "Overdue (${output.format(dueDate)})"
-            daysDiff == 0 -> "Due Today"
-            daysDiff == 1 -> "Due Tomorrow"
-            daysDiff <= 7 -> "Due in $daysDiff days"
-            else -> "Due ${output.format(dueDate)}"
-        }
-    } catch (e: Exception) {
-        dateString
-    }
+    return DateUtils.formatDueDate(dateString)
 }
 
 //---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

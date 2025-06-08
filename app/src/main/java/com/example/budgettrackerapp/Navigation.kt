@@ -24,6 +24,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
+import com.example.budgettrackerapp.ui.theme.ErrorScreen
+import com.example.budgettrackerapp.ui.theme.UserIdErrorScreen
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.navbar.MenuDrawer
 import com.example.budgettrackerapp.ui.theme.ProfileScreen
@@ -133,7 +135,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         HomeScreen(
                             navController = navController,
                             viewModel = viewModel,
@@ -150,7 +162,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         TransactionScreen(
                             navController = navController,
                             viewModel = viewModel,
@@ -167,7 +189,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         UpcomingBillsScreen(
                             navController = navController,
                             viewModel = viewModel,
@@ -184,7 +216,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         StatsScreen(
                             viewModel = viewModel,
                             userId = userId
@@ -200,7 +242,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         RewardsScreen(
                             viewModel = viewModel
                         )
@@ -215,7 +267,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         val loggedInUser by viewModel.loginResult.collectAsState()
                         val username = loggedInUser?.username ?: "User"
 
@@ -235,7 +297,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                             }
                         )
                     ) { backStackEntry ->
-                        backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         SettingsScreen()
                     }
 
@@ -263,7 +335,17 @@ fun AppNavigation(viewModel: BudgetViewModel) {
                         )
                     ) { backStackEntry ->
                         val initialAmount = backStackEntry.arguments?.getString("initialAmount") ?: "0.00"
-                        val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+                        val userId = backStackEntry.arguments?.getString("userId")
+                        if (userId.isNullOrBlank()) {
+                            UserIdErrorScreen(
+                                onNavigateToLogin = {
+                                    navController.navigate("login") {
+                                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    }
+                                }
+                            )
+                            return@composable
+                        }
                         AddExpense(
                             navController = navController,
                             initialAmount = initialAmount,

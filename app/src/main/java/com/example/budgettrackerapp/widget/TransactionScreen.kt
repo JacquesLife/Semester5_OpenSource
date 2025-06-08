@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
+import com.example.budgettrackerapp.utils.DateUtils
 import coil.compose.rememberAsyncImagePainter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -195,80 +196,7 @@ fun TransactionList(modifier: Modifier, navController: NavController, expenses: 
         val matchesDateRange = if (startDate.isBlank() || endDate.isBlank()) {
             true
         } else {
-            try {
-                // Define multiple date format parsers to handle different formats
-                val possibleDateFormats = listOf(
-                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
-                    SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault()),
-                    SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                )
-
-                // Helper function to try parsing with multiple formats
-                fun parseDate(dateStr: String): Date? {
-                    for (format in possibleDateFormats) {
-                        try {
-                            return format.parse(dateStr.trim())
-                        } catch (e: Exception) {
-                            // Continue to next format
-                        }
-                    }
-                    // If no format worked, log the failure
-                    Log.e("DateFilter", "Failed to parse date: $dateStr")
-                    return null
-                }
-
-                // For debugging
-                Log.d("DateFilter", "Trying to parse - Expense date: ${expense.date}")
-                Log.d("DateFilter", "Trying to parse - Start date: $startDate, End date: $endDate")
-
-                // Parse dates with our multi-format parser
-                val expenseDate = parseDate(expense.date)
-                val start = parseDate(startDate)
-                val end = parseDate(endDate)
-
-                // Normalize times for comparison (if dates parsed successfully)
-                val normalizedExpenseDate = expenseDate?.let {
-                    Calendar.getInstance().apply {
-                        time = it
-                        set(Calendar.HOUR_OF_DAY, 12)
-                        set(Calendar.MINUTE, 0)
-                        set(Calendar.SECOND, 0)
-                    }.time
-                }
-
-                val normalizedStart = start?.let {
-                    Calendar.getInstance().apply {
-                        time = it
-                        set(Calendar.HOUR_OF_DAY, 0)
-                        set(Calendar.MINUTE, 0)
-                        set(Calendar.SECOND, 0)
-                    }.time
-                }
-
-                val normalizedEnd = end?.let {
-                    Calendar.getInstance().apply {
-                        time = it
-                        set(Calendar.HOUR_OF_DAY, 23)
-                        set(Calendar.MINUTE, 59)
-                        set(Calendar.SECOND, 59)
-                    }.time
-                }
-
-                // Debug
-                Log.d("DateFilter", "Normalized - Expense date: ${normalizedExpenseDate}, Start: ${normalizedStart}, End: $normalizedEnd")
-
-                // Make sure all dates are valid before comparing
-                if (normalizedExpenseDate != null && normalizedStart != null && normalizedEnd != null) {
-                    // Check if expense date is within range (inclusive of both start and end dates)
-                    normalizedExpenseDate >= normalizedStart && normalizedExpenseDate <= normalizedEnd
-                } else {
-                    Log.d("DateFilter", "Null date after parsing, skipping expense")
-                    false
-                }
-            } catch (e: Exception) {
-                Log.e("DateFilter", "Error filtering date: ${e.message}", e)
-                false // If there's an error, don't include this expense
-            }
+            DateUtils.isDateInRange(expense.date, startDate, endDate)
         }
 
         matchesSearch && matchesDateRange
@@ -630,13 +558,7 @@ fun TransactionDetailItem(
 
 // Helper function to format dates for display
 private fun formatDisplayDate(dateString: String): String {
-    return try {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        outputFormat.format(inputFormat.parse(dateString)!!)
-    } catch (e: Exception) {
-        dateString
-    }
+    return DateUtils.formatForDisplay(dateString)
 }
 
 //---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

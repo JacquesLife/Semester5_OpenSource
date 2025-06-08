@@ -42,7 +42,12 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         // Monthly Budget Input
         OutlinedTextField(
             value = monthlyBudget,
-            onValueChange = { monthlyBudget = it },
+            onValueChange = { newValue ->
+                // Only allow numbers and decimal points
+                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                    monthlyBudget = newValue
+                }
+            },
             label = { Text("Monthly Budget", color = MaterialTheme.colorScheme.onSurface) },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
@@ -50,7 +55,9 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                 focusedLabelColor = MaterialTheme.colorScheme.primary,
                 unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            )
+            ),
+            singleLine = true,
+            placeholder = { Text("Enter your monthly budget", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -58,9 +65,16 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         // Input fields for monthly budget, max goal, and min goal
         OutlinedTextField(
             value = monthlyMaxGoal,
-            onValueChange = { monthlyMaxGoal = it },
+            onValueChange = { newValue ->
+                // Only allow numbers and decimal points
+                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                    monthlyMaxGoal = newValue
+                }
+            },
             label = { Text("Monthly Max Goal") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            placeholder = { Text("Enter maximum spending goal", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -68,25 +82,45 @@ fun HomeScreen(viewModel: BudgetViewModel = viewModel(), navController: NavContr
         // Input fields for monthly budget, max goal, and min goal
         OutlinedTextField(
             value = monthlyMinGoal,
-            onValueChange = { monthlyMinGoal = it },
+            onValueChange = { newValue ->
+                // Only allow numbers and decimal points
+                if (newValue.isEmpty() || newValue.matches(Regex("^\\d*\\.?\\d*$"))) {
+                    monthlyMinGoal = newValue
+                }
+            },
             label = { Text("Monthly Min Goal") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            placeholder = { Text("Enter minimum spending goal", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)) }
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
             onClick = {
+                // Validate inputs with safe fallbacks
+                val validBudget = monthlyBudget.toDoubleOrNull()?.takeIf { it > 0.0 } ?: 0.0
+                val validMaxGoal = monthlyMaxGoal.toDoubleOrNull()?.takeIf { it >= 0.0 } ?: 0.0
+                val validMinGoal = monthlyMinGoal.toDoubleOrNull()?.takeIf { it >= 0.0 } ?: 0.0
+                
                 val settings = BudgetSettings(
                     userId = userId,
-                    monthlyBudget = monthlyBudget.toDoubleOrNull() ?: 0.0,
-                    monthlyMaxGoal = monthlyMaxGoal.toDoubleOrNull() ?: 0.0,
-                    monthlyMinGoal = monthlyMinGoal.toDoubleOrNull() ?: 0.0
+                    monthlyBudget = validBudget,
+                    monthlyMaxGoal = validMaxGoal,
+                    monthlyMinGoal = validMinGoal
                 )
-                viewModel.saveBudgetSettings(settings)
-
-                // Navigate to the upcoming bills screen
-                navController.navigate("upcoming_bills/$userId")
+                
+                viewModel.saveBudgetSettings(settings) { success ->
+                    if (success) {
+                        // Navigate to the upcoming bills screen
+                        try {
+                            navController.navigate("upcoming_bills/$userId")
+                        } catch (e: Exception) {
+                            // Fallback navigation
+                            navController.popBackStack()
+                        }
+                    }
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
