@@ -1,4 +1,6 @@
 /// References: https://www.youtube.com/watch?v=HGsVBqUrnGY
+//https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
+//https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
 /// This page will graphically display the user's stats and upcoming payments
 /// it will display them neatly with a pie chart
 
@@ -41,8 +43,6 @@ fun StatsScreen(viewModel: BudgetViewModel, userId: String)
     val expenses = viewModel.expenses.collectAsState(emptyList()).value
 
     // Grouping the expenses by category and amount
-    //https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
-    //https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
     val grouped = expenses.groupBy { it.category }
     val categories = grouped.keys.toList()
     val values = grouped.values.map { list -> list.sumOf { it.amount }.toFloat() }
@@ -194,3 +194,5 @@ fun StatsScreen(viewModel: BudgetViewModel, userId: String)
         }
     }
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

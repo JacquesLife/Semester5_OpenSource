@@ -42,21 +42,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.budgettrackerapp.R
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.data.Expense
 import com.example.budgettrackerapp.utils.DateUtils
 import com.example.budgettrackerapp.widget.ExpenseTextView
-import okhttp3.internal.userAgent
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -147,23 +144,23 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "", u
     var recurringInterval by remember { mutableStateOf("monthly") }
     var recurringExpanded by remember { mutableStateOf(false) }
     var notificationEnabled by remember { mutableStateOf(false) }
-    var notificationDaysBefore by remember { mutableStateOf(3f) }
+    var notificationDaysBefore by remember { mutableFloatStateOf(3f) }
 
     // Image picker launcher
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        try {
-            selectedImageUri = uri
+        selectedImageUri = try {
+            uri
         } catch (e: Exception) {
             // Silently fail if image selection fails
-            selectedImageUri = null
+            null
         }
     }
 
     // Calendar setup
     val calendar = remember { Calendar.getInstance() }
-    val dateFormatter = remember { SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault()) }
+    remember { SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault()) }
 
     // Date picker dialog
     val datePickerDialog = DatePickerDialog(
@@ -479,7 +476,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "", u
                 
                 val formattedDate = DateUtils.formatForStorage(expenseDate)
                 
-                val validUserId = if (userId.isBlank()) "default_user" else userId
+                val validUserId = userId.ifBlank { "default_user" }
                 
                 val validRecurringInterval = if (isRecurring && recurringInterval.isNotBlank()) {
                     recurringInterval
@@ -510,7 +507,7 @@ fun DataForm(navController: NavController? = null, initialAmount: String = "", u
                     )
                     
                     //Add expense button
-                    viewModel.addExpense(expense) { success, expenseId ->
+                    viewModel.addExpense(expense) { success, _ ->
                         try {
                             if (success && expense.notificationEnabled) {
                                 // Trigger immediate notification check for new expense

@@ -24,7 +24,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.budgettrackerapp.data.BudgetViewModel
 import com.example.budgettrackerapp.ui.theme.AddExpense
-import com.example.budgettrackerapp.ui.theme.ErrorScreen
 import com.example.budgettrackerapp.ui.theme.UserIdErrorScreen
 import com.example.budgettrackerapp.ui.theme.navbar.BottomNavBar
 import com.example.budgettrackerapp.ui.theme.navbar.MenuDrawer

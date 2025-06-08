@@ -133,8 +133,8 @@ object DateUtils {
             val normalizedDate = normalizeDate(date)
             val normalizedStart = normalizeDate(startDate, isStartOfDay = true)
             val normalizedEnd = normalizeDate(endDate, isStartOfDay = false)
-            
-            normalizedDate >= normalizedStart && normalizedDate <= normalizedEnd
+
+            normalizedDate in normalizedStart..normalizedEnd
         } catch (e: Exception) {
             Log.e(TAG, "Error checking date range", e)
             false

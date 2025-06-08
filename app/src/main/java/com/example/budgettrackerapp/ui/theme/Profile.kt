@@ -18,16 +18,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.budgettrackerapp.data.BudgetViewModel
+import com.example.budgettrackerapp.ui.theme.rewards.RewardTier
+import com.example.budgettrackerapp.ui.theme.rewards.RewardTiers
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
     viewModel: BudgetViewModel,
-    username: String = "John Doe",
-    rank: String = "Gold"
+    username: String
 ) {
     val user by viewModel.loginResult.collectAsState()
     val budgetSettings by viewModel.budgetSettings.collectAsState()
+    val expenses by viewModel.expenses.collectAsState()
+
+    // Calculate user points and tier
+    val totalSpent = expenses.sumOf { it.amount }
+    val minGoal = budgetSettings?.monthlyMinGoal ?: 0.0
+    val maxGoal = budgetSettings?.monthlyMaxGoal ?: 0.0
+    val userPoints = calculateUserPoints(totalSpent, minGoal, maxGoal)
+    val currentTier = getUserTier(userPoints)
 
     Column(
         modifier = Modifier
@@ -36,15 +45,20 @@ fun ProfileScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Profile picture
+        // Profile picture with first letter
         Box(
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
-            Text("Photo", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
+            Text(
+                text = username.take(1).uppercase(),
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -59,11 +73,11 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Rank
+        // Rank with tier color
         Text(
-            text = "Rank: $rank",
+            text = "Rank: ${currentTier.name}",
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            color = currentTier.color
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -108,6 +122,23 @@ fun ProfileScreen(
         ) {
             Text("Logout", color = MaterialTheme.colorScheme.onError)
         }
+    }
+}
+
+// Helper functions from RewardsScreen
+private fun calculateUserPoints(totalSpent: Double, minGoal: Double, maxGoal: Double): Int {
+    if (totalSpent < minGoal || totalSpent > maxGoal) return 0
+    val range = maxGoal - minGoal
+    val distanceFromMin = totalSpent - minGoal
+    return ((1 - (distanceFromMin / range)) * 500).toInt()
+}
+
+private fun getUserTier(points: Int): RewardTier {
+    return when {
+        points >= 501 -> RewardTiers.PLATINUM
+        points >= 251 -> RewardTiers.GOLD
+        points >= 101 -> RewardTiers.SILVER
+        else -> RewardTiers.BRONZE
     }
 }
 

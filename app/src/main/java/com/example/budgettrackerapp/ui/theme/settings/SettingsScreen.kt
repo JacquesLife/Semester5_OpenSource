@@ -46,6 +46,6 @@ fun SettingsScreen() {
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-        // Add more settings options here as needed
     }
 }
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

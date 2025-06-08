@@ -4,7 +4,6 @@
 
 package com.example.budgettrackerapp.widget
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +14,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -321,10 +319,6 @@ fun getCategoryIcon(category: String): Int {
 // These functions are now deprecated - use DateUtils instead
 fun formatDate(dateString: String): String {
     return DateUtils.formatForDisplay(dateString)
-}
-
-fun formatDueDate(dateString: String): String {
-    return DateUtils.formatDueDate(dateString)
 }
 
 //---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
