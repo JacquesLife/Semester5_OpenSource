@@ -52,8 +52,9 @@ class ExpenseNotificationManager(private val context: Context) {
             description = "Test Bill",
             category = "Utilities",
             amount = 100.0,
-            dueDate = "2025-01-10",
-            userOwnerId = "test"
+            date = "2025-01-10",
+            userOwnerId = "test",
+            notificationEnabled = true
         )
         notificationService.sendExpenseDueNotification(testExpense, 1)
     }

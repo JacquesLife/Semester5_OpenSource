@@ -29,14 +29,14 @@ class ExpenseNotificationWorker(
         val currentUser = getCurrentUser() ?: return
         
         // Get all expenses for current user from Firebase
-        val expenses = getExpensesFromFirebase(currentUser.id)
+        val expenses = getExpensesFromFirebase(currentUser.userId)
         val today = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         
         expenses.forEach { expense ->
-            if (expense.dueDate.isNotEmpty() && expense.notificationEnabled) {
+            if (expense.date.isNotEmpty() && expense.notificationEnabled) {
                 try {
-                    val dueDate = LocalDate.parse(expense.dueDate, formatter)
+                    val dueDate = LocalDate.parse(expense.date, formatter)
                     val daysUntilDue = ChronoUnit.DAYS.between(today, dueDate).toInt()
                     
                     // Send notification if expense is due within the specified notification period

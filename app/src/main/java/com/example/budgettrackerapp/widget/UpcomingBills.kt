@@ -52,7 +52,7 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
     val budgetSettings by viewModel.budgetSettings.collectAsState()
 
     val totalBalance = budgetSettings?.monthlyBudget ?: 0.0
-    val upcomingBillsAmount = expenses.filter { it.dueDate.isNotEmpty() }.sumOf { it.amount }
+    val upcomingBillsAmount = expenses.filter { it.notificationEnabled || it.isRecurring }.sumOf { it.amount }
     val paidBillsAmount = 0.0
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -197,13 +197,13 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
     val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
     var allExpanded by remember { mutableStateOf(false) }
     
-    // Filter expenses to only show those with due dates (upcoming bills)
+    // Filter expenses to only show those that are bills (have notifications enabled or are recurring)
     val upcomingBills = expenses.filter { expense ->
-        expense.dueDate.isNotEmpty()
+        expense.notificationEnabled || expense.isRecurring
     }.sortedBy { expense ->
-        // Sort by due date
+        // Sort by date
         try {
-            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(expense.dueDate)
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(expense.date)
         } catch (e: Exception) {
             Date()
         }
@@ -250,12 +250,12 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
                     }
                     .padding(vertical = 8.dp)
                 ) {
-                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDueDate(items.first().dueDate), Color.Red)
+                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDueDate(items.first().date), Color.Red)
 
                     if (expanded) {
                         items.forEach { item ->
                             BillItem(
-                                title = "${item.description} (Due: ${formatDueDate(item.dueDate)})",
+                                title = "${item.description} (Due: ${formatDueDate(item.date)})",
                                 amount = "R%.2f".format(item.amount),
                                 icon = getCategoryIcon(item.category),
                                 date = if (item.isRecurring) "Recurring ${item.recurringInterval}" else "One-time",
