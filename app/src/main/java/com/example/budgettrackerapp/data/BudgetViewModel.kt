@@ -1,6 +1,7 @@
 package com.example.budgettrackerapp.data
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,8 +43,20 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         val user = repository.loginUser(username)
         if (user != null && BCrypt.checkpw(password, user.password)) {
             _loginResult.value = user // Login successful
+            // Save user session for notification system
+            saveUserSession(user)
         } else {
             _loginResult.value = null // Login failed
+        }
+    }
+    
+    // Saves user session to SharedPreferences for notification system
+    private fun saveUserSession(user: User) {
+        val sharedPrefs = getApplication<Application>().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            putString("current_user_id", user.userId)
+            putString("current_username", user.username)
+            apply()
         }
     }
 
@@ -101,5 +114,17 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     // Clears the logged-in user (used during logout)
     fun logout() {
         _loginResult.value = null
+        // Clear user session
+        clearUserSession()
+    }
+    
+    // Clears user session from SharedPreferences
+    private fun clearUserSession() {
+        val sharedPrefs = getApplication<Application>().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            remove("current_user_id")
+            remove("current_username")
+            apply()
+        }
     }
 }

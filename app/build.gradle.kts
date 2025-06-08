@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.budgettrackerapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -105,4 +105,10 @@ dependencies {
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+    
+    // WorkManager for background tasks
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    
+    // Notification support
+    implementation("androidx.core:core-ktx:1.12.0")
 }

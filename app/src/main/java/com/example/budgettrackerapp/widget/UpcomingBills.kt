@@ -52,7 +52,7 @@ fun UpcomingBillsScreen(navController: NavController, viewModel: BudgetViewModel
     val budgetSettings by viewModel.budgetSettings.collectAsState()
 
     val totalBalance = budgetSettings?.monthlyBudget ?: 0.0
-    val upcomingBillsAmount = expenses.sumOf { it.amount }
+    val upcomingBillsAmount = expenses.filter { it.notificationEnabled || it.isRecurring }.sumOf { it.amount }
     val paidBillsAmount = 0.0
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -196,6 +196,18 @@ fun UpcomingBillsList(modifier: Modifier, navController: NavController, expenses
 fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
     val expandedCategories = remember { mutableStateMapOf<String, Boolean>() }
     var allExpanded by remember { mutableStateOf(false) }
+    
+    // Filter expenses to only show those that are bills (have notifications enabled or are recurring)
+    val upcomingBills = expenses.filter { expense ->
+        expense.notificationEnabled || expense.isRecurring
+    }.sortedBy { expense ->
+        // Sort by date
+        try {
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(expense.date)
+        } catch (e: Exception) {
+            Date()
+        }
+    }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -206,7 +218,7 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .clickable {
-                        val grouped = expenses.groupBy { it.category }
+                        val grouped = upcomingBills.groupBy { it.category }
                         grouped.keys.forEach { category ->
                             expandedCategories[category] = !allExpanded
                         }
@@ -216,7 +228,7 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
         }
         Spacer(Modifier.height(8.dp))
 
-        if (expenses.isEmpty()) {
+        if (upcomingBills.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -226,7 +238,7 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
                 ExpenseTextView("No upcoming bills found", fontSize = 16.sp, fontWeight = FontWeight.Medium)
             }
         } else {
-            val grouped = expenses.groupBy { it.category }
+            val grouped = upcomingBills.groupBy { it.category }
             grouped.forEach { (category, items) ->
                 val total = items.sumOf { it.amount }
                 val expanded = expandedCategories[category] ?: false
@@ -238,15 +250,15 @@ fun UpcomingBillItems(expenses: List<Expense>, navController: NavController) {
                     }
                     .padding(vertical = 8.dp)
                 ) {
-                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDate(items.first().date), Color.Red)
+                    BillItem(category, "R%.2f".format(total), getCategoryIcon(category), formatDueDate(items.first().date), Color.Red)
 
                     if (expanded) {
                         items.forEach { item ->
                             BillItem(
-                                title = item.description,
+                                title = "${item.description} (Due: ${formatDueDate(item.date)})",
                                 amount = "R%.2f".format(item.amount),
                                 icon = getCategoryIcon(item.category),
-                                date = formatDate(item.date),
+                                date = if (item.isRecurring) "Recurring ${item.recurringInterval}" else "One-time",
                                 color = Color.Gray,
                                 photoUri = item.photoUri
                             )
@@ -310,6 +322,26 @@ fun formatDate(dateString: String): String {
         val input = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val output = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         output.format(input.parse(dateString) ?: Date())
+    } catch (e: Exception) {
+        dateString
+    }
+}
+
+fun formatDueDate(dateString: String): String {
+    return try {
+        val input = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val output = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val dueDate = input.parse(dateString) ?: return dateString
+        val today = Date()
+        val daysDiff = ((dueDate.time - today.time) / (1000 * 60 * 60 * 24)).toInt()
+        
+        when {
+            daysDiff < 0 -> "Overdue (${output.format(dueDate)})"
+            daysDiff == 0 -> "Due Today"
+            daysDiff == 1 -> "Due Tomorrow"
+            daysDiff <= 7 -> "Due in $daysDiff days"
+            else -> "Due ${output.format(dueDate)}"
+        }
     } catch (e: Exception) {
         dateString
     }
