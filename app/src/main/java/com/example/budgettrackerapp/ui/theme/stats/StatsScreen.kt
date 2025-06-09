@@ -1,16 +1,16 @@
 /// References: https://www.youtube.com/watch?v=HGsVBqUrnGY
-/// References: https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
+/// https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
+///https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
+///https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
+/// https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
 /// This page will graphically display the user's stats and upcoming payments
 /// it will display them neatly with a pie chart
 
 package com.example.budgettrackerapp.ui.theme.stats
 
 import android.app.DatePickerDialog
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.navigation.NavController
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -35,9 +34,8 @@ import com.example.budgettrackerapp.utils.DateUtils
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId: String) {
+fun StatsScreen(viewModel: BudgetViewModel, userId: String) {
     // Load data from the databases
     LaunchedEffect(Unit) {
         viewModel.loadExpenses(userId)
@@ -59,8 +57,6 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
     }
 
     // Grouping the expenses by category and amount
-    //https://medium.com/@paritasampa95/piechart-in-android-jetpack-compose-5e7642c9f955
-    //https://www.geeksforgeeks.org/pie-chart-in-android-using-jetpack-compose/
     val grouped = expenses.groupBy { it.category }
     val categories = grouped.keys.toList()
     val values = grouped.values.map { list -> list.sumOf { it.amount }.toFloat() }
@@ -274,7 +270,6 @@ fun StatsScreen(navController: NavController, viewModel: BudgetViewModel, userId
 
 /// Methods to filter expenses based on date
 /// https://youtu.be/cJxo96eTHVU?si=Id_53lmEb-Vo87IR
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ShowDatePicker(onDateSelected: (LocalDate) -> Unit) {
     val context = LocalContext.current
@@ -292,3 +287,5 @@ fun ShowDatePicker(onDateSelected: (LocalDate) -> Unit) {
         year, month, day
     ).show()
 }
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------

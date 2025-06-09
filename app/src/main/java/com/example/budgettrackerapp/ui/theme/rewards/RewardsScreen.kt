@@ -339,3 +339,7 @@ private fun calculateProgress(points: Int, minPoints: Int, maxPoints: Int): Floa
     return if (maxPoints == Int.MAX_VALUE) 1f
     else min((points - minPoints).toFloat() / (maxPoints - minPoints), 1f)
 }
+
+
+//---------------------------------------------------End_of_File-----------------------------------------------------------------------------------------
+
