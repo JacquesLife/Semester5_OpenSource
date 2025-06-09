@@ -26,6 +26,7 @@ This app allows users to:
 - 🧾 Add detailed transactions with optional photos
 - 🎯 Set monthly financial goals
 - 👤 Manage and personalize their user profile
+- 🌙 Toggle Dark Mode in Settings
 
 ---
 
@@ -107,6 +108,11 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 - Limits eye strain for prolonged app usage.
 
 --- 
+
+### Menu Drawer
+
+- Alternative navigation method contains a list of all screens that the user can navigate to.
+- User can access more screens (Settings Screen and still in development Help and Support).
 
 ##  Technical Highlights
 
