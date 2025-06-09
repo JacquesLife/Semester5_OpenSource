@@ -101,6 +101,13 @@ The app uses a bottom navigation bar (except on login/register screens) to switc
 
 ---
 
+### Dark Mode
+
+- The user can change the device theme from light mode to dark in the settings page located in the menu drawer.
+- Limits eye strain for prolonged app usage.
+
+--- 
+
 ##  Technical Highlights
 
 - **Room Database** with DAOs for `User`, `Expense`, `Category`, `BudgetSettings`
