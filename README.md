@@ -18,6 +18,10 @@ Welcome to the **BuckSavers**, a Kotlin-based Android application designed to he
 - Walkthrough Video: https://www.youtube.com/watch?v=mXjAB-rR950
 - Demonstrational video on Android device: https://youtu.be/tN4FlSZtSqU
 
+## Github Actions
+
+- Github Actions configured to ensure code in main compiles and builds successfully.
+
 ##  App Purpose
 
 This app allows users to:
