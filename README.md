@@ -16,6 +16,7 @@ Welcome to the **BuckSavers**, a Kotlin-based Android application designed to he
 
 - Github: https://github.com/JacquesLife/Semester5_OpenSource
 - Walkthrough Video: https://www.youtube.com/watch?v=mXjAB-rR950
+- Demonstrational video on Android device: https://youtu.be/tN4FlSZtSqU
 
 ##  App Purpose
 
